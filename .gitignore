@@ -1,0 +1,9 @@
+node_modules
+
+# local env files
+
+package-lock.json
+
+# Editor directories and files
+.vscode
+.expo
