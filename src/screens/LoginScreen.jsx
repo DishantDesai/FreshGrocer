@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-const Home = () => {
+const Home = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
@@ -23,7 +23,10 @@ const Home = () => {
           <Text style={styles.text}>Welcome!</Text>
           <TextInput style={styles.input} placeholder="Email" />
           <TextInput style={styles.input} placeholder="Password" />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Home")}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
@@ -31,7 +34,7 @@ const Home = () => {
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >
             Don't have an account?
-            <Text style={{ color: "#ff5b2d" }}> Sign Up</Text>
+            <Text style={{ color: "#FF4A03" }}> Sign Up</Text>
           </Text>
         </View>
       </SafeAreaView>
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   logo: {
-    color: "#ff5b2d",
+    color: "#FF4A03",
     fontSize: 28,
     fontFamily: "Lobster-Regular",
     alignSelf: "center",
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   button: {
-    backgroundColor: "#ff5b2d",
+    backgroundColor: "#FF4A03",
     borderRadius: 15,
     shadowColor: "rgba(0,0,0, .4)", // IOS
     shadowOffset: { height: 1, width: 1 }, // IOS
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   forgotPassword: {
-    color: "#ff5b2d",
+    color: "#FF4A03",
     alignSelf: "center",
     marginTop: "20%",
   },
