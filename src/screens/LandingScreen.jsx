@@ -1,15 +1,10 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-const Home = ({ navigation }) => {
+
+const LandingScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
@@ -20,25 +15,27 @@ const Home = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.logo}>Fresh Grocer</Text>
         <View style={styles.loginFormContainer}>
-          <Text style={styles.text}>Welcome!</Text>
-          <TextInput style={styles.input} placeholder="Email" />
-          <TextInput style={styles.input} placeholder="Password" />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("Signup")}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign Up with Email</Text>
           </TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+          <TouchableOpacity style={styles.buttonGoogle}>
+            <Text style={styles.buttonText}>Sign In with Google</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonFacebook}>
+            <Text style={styles.buttonText}>Sign In with Facebook</Text>
+          </TouchableOpacity>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >
-            Don't have an account?
+            Have an account?
             <Text
               style={{ color: "#ff5b2d" }}
-              onPress={() => navigation.navigate("Landing")}
+              onPress={() => navigation.navigate("Login")}
             >
-              &nbsp;{"Sign Up"}
+              &nbsp; Sign In
             </Text>
           </Text>
         </View>
@@ -55,32 +52,17 @@ const styles = StyleSheet.create({
   },
   logo: {
     color: "#ff5b2d",
-    fontSize: 28,
+    fontSize: 35,
     fontFamily: "Lobster-Regular",
     alignSelf: "center",
+    marginTop: 50,
+    marginBottom: 40,
   },
   loginFormContainer: {
     top: "10%",
     paddingHorizontal: "5%",
   },
-  text: {
-    color: "#8d8e8f",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: "#ecedf1",
-    height: 45,
-    marginBottom: 20,
-    borderRadius: 15,
-    shadowColor: "rgba(0,0,0, .4)", // IOS
-    shadowOffset: { height: 1, width: 1 }, // IOS
-    shadowOpacity: 1, // IOS
-    shadowRadius: 1, //IOS
-    elevation: 2, // Android
-    paddingHorizontal: 10,
-  },
+
   button: {
     backgroundColor: "#ff5b2d",
     borderRadius: 15,
@@ -93,7 +75,37 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 5,
+    marginTop: 10,
+  },
+
+  buttonGoogle: {
+    backgroundColor: "#4285F4",
+    borderRadius: 15,
+    shadowColor: "rgba(0,0,0, .4)", // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    elevation: 2, // Android
+    height: 45,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+
+  buttonFacebook: {
+    backgroundColor: "#475993",
+    borderRadius: 15,
+    shadowColor: "rgba(0,0,0, .4)", // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    elevation: 2, // Android
+    height: 45,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
   },
   buttonText: {
     color: "white",
@@ -101,11 +113,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
   },
-  forgotPassword: {
-    color: "#ff5b2d",
-    alignSelf: "center",
-    marginTop: "20%",
-  },
 });
 
-export default Home;
+export default LandingScreen;

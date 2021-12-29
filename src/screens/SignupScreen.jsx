@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-const Home = ({ navigation }) => {
+const SignupScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
@@ -20,25 +20,45 @@ const Home = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.logo}>Fresh Grocer</Text>
         <View style={styles.loginFormContainer}>
-          <Text style={styles.text}>Welcome!</Text>
-          <TextInput style={styles.input} placeholder="Email" />
+          <Text style={styles.text}>Sign Up!</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            keyboardType="default"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone No."
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Address"
+            keyboardType="default"
+          />
           <TextInput style={styles.input} placeholder="Password" />
+          <TextInput style={styles.input} placeholder="Confirm Password" />
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate("Home")}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >
-            Don't have an account?
+            Have an account?
             <Text
               style={{ color: "#ff5b2d" }}
-              onPress={() => navigation.navigate("Landing")}
+              onPress={() => navigation.navigate("Login")}
             >
-              &nbsp;{"Sign Up"}
+              &nbsp;Sign In
             </Text>
           </Text>
         </View>
@@ -108,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default SignupScreen;
