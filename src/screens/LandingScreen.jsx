@@ -35,7 +35,7 @@ const LandingScreen = ({ navigation }) => {
               style={{ color: "#ff5b2d" }}
               onPress={() => navigation.navigate("Home")}
             >
-              Sign In
+              &nbsp; Sign In
             </Text>
           </Text>
         </View>

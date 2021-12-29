@@ -35,7 +35,7 @@ const Home = ({ navigation }) => {
               style={{ color: "#ff5b2d" }}
               onPress={() => navigation.navigate("Landing")}
             >
-              {"Sign Up"}
+              &nbsp;{"Sign Up"}
             </Text>
           </Text>
         </View>

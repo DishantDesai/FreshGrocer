@@ -50,7 +50,6 @@ const SignupScreen = ({ navigation }) => {
           >
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >
@@ -59,7 +58,7 @@ const SignupScreen = ({ navigation }) => {
               style={{ color: "#ff5b2d" }}
               onPress={() => navigation.navigate("Home")}
             >
-              {"Sign In"}
+              &nbsp;Sign In
             </Text>
           </Text>
         </View>
