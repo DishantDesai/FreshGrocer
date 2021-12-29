@@ -56,7 +56,7 @@ const SignupScreen = ({ navigation }) => {
             Have an account?
             <Text
               style={{ color: "#ff5b2d" }}
-              onPress={() => navigation.navigate("Home")}
+              onPress={() => navigation.navigate("Login")}
             >
               &nbsp;Sign In
             </Text>

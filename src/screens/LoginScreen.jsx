@@ -23,7 +23,10 @@ const Home = ({ navigation }) => {
           <Text style={styles.text}>Welcome!</Text>
           <TextInput style={styles.input} placeholder="Email" />
           <TextInput style={styles.input} placeholder="Password" />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Home")}
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>

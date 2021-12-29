@@ -3,9 +3,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import LoginScreen from "./src/screens/LoginScreen";
-import LandingScreen from "./src/screens/LandingScreen";
-import SignupScreen from "./src/screens/SignupScreen";
+//Screen imports
+import Landing from "./src/screens/LandingScreen";
+import Login from "./src/screens/LoginScreen";
+import Signup from "./src/screens/SignupScreen";
+import Home from "./src/screens/User/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,17 +19,22 @@ const App = () => {
           <Stack.Screen
             name="Landing"
             options={{ headerShown: false }}
-            component={LandingScreen}
+            component={Landing}
           />
           <Stack.Screen
             name="Signup"
             options={{ headerShown: false }}
-            component={SignupScreen}
+            component={Signup}
+          />
+          <Stack.Screen
+            name="Login"
+            options={{ headerShown: false }}
+            component={Login}
           />
           <Stack.Screen
             name="Home"
             options={{ headerShown: false }}
-            component={LoginScreen}
+            component={Home}
           />
         </Stack.Navigator>
       </NavigationContainer>
