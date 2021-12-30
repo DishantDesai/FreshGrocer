@@ -12,38 +12,44 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState("weekly");
   const categoryList = [
     {
       id: 1,
       title: "Fruits & Vegetables",
       thumb: require("../../../assets/images/fruits-and-vegetables.jpeg"),
+      type: "fruitsAndVegetables",
     },
     {
       id: 2,
       title: "Dairy & Eggs",
       thumb: require("../../../assets/images/Dairy-and-eggs.jpeg"),
+      type: "dairy",
     },
     {
       id: 3,
       title: "Meet & Sea Food",
       thumb: require("../../../assets/images/meat-and-sea-food.jpeg"),
+      type: "meat",
     },
     {
       id: 4,
       title: "Pantry & Groceries",
       thumb: require("../../../assets/images/pantry.jpeg"),
+      type: "pantry",
     },
     {
       id: 5,
       title: "Bakery",
       thumb: require("../../../assets/images/bakery.jpeg"),
+      type: "bakery",
     },
     {
       id: 6,
       title: "Frozen Food",
       thumb: require("../../../assets/images/frozen-food.jpeg"),
+      type: "frozen",
     },
   ];
   const filterList = [
@@ -118,7 +124,7 @@ const Home = () => {
           numColumns={2}
           columnWrapperStyle={styles.categoryContainer}
           renderItem={({ item }) => {
-            return <CategoryItem category={item} />;
+            return <CategoryItem category={item} navigation={navigation} />;
           }}
           keyExtractor={(item) => item.id}
         />
