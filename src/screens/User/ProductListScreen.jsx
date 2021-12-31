@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, TextInput } from "react-native";
-import { vegetablesAndFruits } from "../../utils/data";
+import {
+  StyleSheet,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import {
+  vegetablesAndFruits,
+  dairyAndEggs,
+  meatAndSeaFood,
+  pantryFood,
+  bakeryFood,
+  frozenFood,
+} from "../../utils/data";
 import ProductItem from "../../components/User/ProductItem";
 import Header from "../../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,6 +25,16 @@ const ProductListScreen = ({ route }) => {
   useEffect(() => {
     if (category.type === "fruitsAndVegetables") {
       setProductList(vegetablesAndFruits);
+    } else if (category.type === "dairy") {
+      setProductList(dairyAndEggs);
+    } else if (category.type === "meat") {
+      setProductList(meatAndSeaFood);
+    } else if (category.type === "bakery") {
+      setProductList(bakeryFood);
+    } else if (category.type === "pantry") {
+      setProductList(pantryFood);
+    } else if (category.type === "frozen") {
+      setProductList(frozenFood);
     }
   }, []);
   return (
@@ -21,6 +45,9 @@ const ProductListScreen = ({ route }) => {
         placeholder="Search items..."
         autoCapitalize="none"
       />
+      <TouchableOpacity>
+        <Text>Sorti</Text>
+      </TouchableOpacity>
       <FlatList
         key={"_"}
         data={productList}

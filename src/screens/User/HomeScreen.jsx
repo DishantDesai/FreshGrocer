@@ -11,7 +11,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
+import ProductItem from "../../components/User/ProductItem";
 
+import { vegetablesAndFruits } from "../../utils/data";
 const Home = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState("weekly");
   const categoryList = [
@@ -129,9 +131,17 @@ const Home = ({ navigation }) => {
           keyExtractor={(item) => item.id}
         />
       ) : (
-        <View>
-          <Text>Favorite Items</Text>
-        </View>
+        <FlatList
+          key={"_"}
+          data={[...vegetablesAndFruits]}
+          horizontal={false}
+          numColumns={2}
+          columnWrapperStyle={styles.categoryContainer}
+          renderItem={({ item }) => {
+            return <ProductItem product={item} />;
+          }}
+          keyExtractor={(item) => item.id}
+        />
       )}
     </SafeAreaView>
   );
