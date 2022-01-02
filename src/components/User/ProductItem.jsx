@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const ProductItem = ({ product }) => {
   const [count, setCount] = useState(0);
+  const navigation = useNavigation();
+
   return (
     <View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ProductDetail", { product })}
+      >
         <View
           style={[count && { backgroundColor: "#F8A37C" }, styles.productBox]}
         >

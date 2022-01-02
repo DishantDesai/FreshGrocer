@@ -6,6 +6,9 @@ export const vegetablesAndFruits = [
     price: 2.47,
     type: "vegetables",
     url: "https://i5.walmartimages.ca/images/Thumbnails/163/460/6000202163460.jpg",
+    ratings: 4,
+    isFavorite: true,
+    hasOffer: false,
   },
   {
     name: "Cucumber",
