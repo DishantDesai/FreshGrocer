@@ -10,6 +10,7 @@ import Signup from "./src/screens/SignupScreen";
 import Home from "./src/screens/User/HomeScreen";
 import ProductList from "./src/screens/User/ProductListScreen";
 import Cart from "./src/screens/User/CartScreen";
+import ProductDetail from "./src/screens/User/ProductDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,11 @@ const App = () => {
             name="Cart"
             options={{ headerShown: false }}
             component={Cart}
+          />
+          <Stack.Screen
+            name="ProductDetail"
+            options={{ headerShown: false }}
+            component={ProductDetail}
           />
         </Stack.Navigator>
       </NavigationContainer>
