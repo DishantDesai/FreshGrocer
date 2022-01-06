@@ -11,6 +11,8 @@ import Home from "./src/screens/User/HomeScreen";
 import ProductList from "./src/screens/User/ProductListScreen";
 import Cart from "./src/screens/User/CartScreen";
 import ProductDetail from "./src/screens/User/ProductDetailScreen";
+import AdminProductList from "./src/screens/Admin/AdminProductListScreen";
+import ProductEditScreen from "./src/screens/Admin/ProductEditScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +55,16 @@ const App = () => {
             name="ProductDetail"
             options={{ headerShown: false }}
             component={ProductDetail}
+          />
+          <Stack.Screen
+            name="AdminProductList"
+            options={{ headerShown: false }}
+            component={AdminProductList}
+          />
+          <Stack.Screen
+            name="ProductEdit"
+            options={{ headerShown: false }}
+            component={ProductEditScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>

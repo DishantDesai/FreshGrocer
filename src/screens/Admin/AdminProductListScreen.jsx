@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -9,9 +9,13 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Dropdown } from "react-native-element-dropdown";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
+import { THEME_COLOR } from "../../utils/constants";
 
 import {
   vegetablesAndFruits,
@@ -21,8 +25,17 @@ import {
   bakeryFood,
   frozenFood,
 } from "../../utils/data";
-const Home = ({ navigation }) => {
+const AdminProductList = ({ navigation, route }) => {
+  // const { category } = route.params;
+  const [sortOption, setSortOption] = useState(null);
+  const data = [
+    { label: "Price low to high", value: "priceDesc" },
+    { label: "Price high to low", value: "priceAsc" },
+    { label: "Top rated", value: "topRated" },
+  ];
   const [activeFilter, setActiveFilter] = useState("weekly");
+  const [productList, setProductList] = useState([]);
+
   const categoryList = [
     {
       id: 1,
@@ -81,99 +94,82 @@ const Home = ({ navigation }) => {
       key: "favorite",
     },
   ];
-  const favoriteItemList = useMemo(() => {
-    if (activeFilter === "favorite") {
-      const allProducts = [
-        ...vegetablesAndFruits,
-        ...dairyAndEggs,
-        ...meatAndSeaFood,
-        ...pantryFood,
-        ...bakeryFood,
-        ...frozenFood,
-      ];
-      return allProducts.filter((p) => p.isFavorite);
-    }
-  }, [activeFilter]);
+  const renderItem = (item) => {
+    return (
+      <View style={styles.item}>
+        <Text
+          style={[
+            item.value === sortOption
+              ? { color: "#ffffff" }
+              : { color: "#000" },
+            styles.textItem,
+          ]}
+        >
+          {item.label}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header hideCart={true} />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
         autoCapitalize="none"
       />
-      <View style={styles.filterContainer}>
-        {filterList.map((filter) => {
-          return (
-            <TouchableOpacity
-              key={filter.id}
-              onPress={() => setActiveFilter(filter.key)}
-            >
-              <View
-                style={[
-                  filter.key === activeFilter
-                    ? styles.activeFilterBg
-                    : styles.inActiveFilterBg,
-                  styles.filterBox,
-                ]}
-              >
-                <Text
-                  style={[
-                    filter.key === activeFilter
-                      ? styles.activeFilterTitle
-                      : styles.inActiveFilterTitle,
-                    styles.filterTitle,
-                  ]}
-                >
-                  {filter.title}
-                </Text>
-                <Image style={styles.filterImage} source={filter.thumb} />
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <View style={{ marginTop: 25 }}>
-        <Text style={styles.selectedFilterTitle}>
-          {activeFilter === "weekly" ? "Weekly Offers" : activeFilter}
-        </Text>
-      </View>
-      {activeFilter !== "favorite" ? (
-        <FlatList
-          key={"_"}
-          data={categoryList}
-          horizontal={false}
-          numColumns={2}
-          columnWrapperStyle={styles.categoryContainer}
-          renderItem={({ item }) => {
-            return (
-              <CategoryItem
-                activeFilter={activeFilter}
-                category={item}
-                navigation={navigation}
-              />
-            );
-          }}
-          keyExtractor={(item) => item.id}
+
+      <View style={styles.sortingContainer}>
+        <Dropdown
+          style={styles.dropdown}
+          containerStyle={styles.containerListStyle}
+          placeholderStyle={styles.activeColor}
+          selectedTextStyle={styles.activeColor}
+          data={data}
+          onChange={(item) => setSortOption(item.value)}
+          value={sortOption}
+          maxHeight={180}
+          labelField="label"
+          valueField="value"
+          placeholder="Sorting"
+          activeColor={THEME_COLOR}
+          iconColor={THEME_COLOR}
+          renderLeftIcon={() => (
+            <MaterialCommunityIcons style={styles.icon} name="sort" size={24} />
+          )}
+          renderItem={renderItem}
         />
-      ) : (
-        <FlatList
-          key={"_"}
-          data={favoriteItemList}
-          horizontal={false}
-          numColumns={2}
-          columnWrapperStyle={styles.categoryContainer}
-          renderItem={({ item }) => {
-            return <ProductItem product={item} />;
-          }}
-          keyExtractor={(item) => item.id}
-        />
-      )}
+        {sortOption ? (
+          <TouchableOpacity onPress={() => setSortOption(null)}>
+            <AntDesign name="closecircleo" size={18} color={THEME_COLOR} />
+          </TouchableOpacity>
+        ) : (
+          <Text></Text>
+        )}
+      </View>
+
+      <FlatList
+        key={"_"}
+        data={[...vegetablesAndFruits]}
+        horizontal={false}
+        numColumns={2}
+        columnWrapperStyle={styles.categoryContainer}
+        renderItem={({ item }) => {
+          return <ProductItem product={item} addIcon={false} />;
+        }}
+        keyExtractor={(item) => item.id}
+      />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  item: {
+    padding: 17,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     paddingTop: 14,
@@ -181,6 +177,21 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: "white",
   },
+  filterBtn: {
+    height: 40,
+    width: 100,
+    marginRight: 5,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  filterTypeText: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  activeFilterBg: { backgroundColor: THEME_COLOR },
+  inactiveFilterBg: { backgroundColor: "#ECEDF1" },
   input: {
     height: 40,
     marginVertical: 12,
@@ -195,9 +206,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  categoryFilterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
   activeFilterBg: {
     backgroundColor: "#FF4A03",
     color: "#ffffff",
+  },
+  sortingContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   inActiveFilterBg: {
     backgroundColor: "#ECEDF1",
@@ -215,6 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "space-around",
   },
+
   filterImage: {
     zIndex: 10,
     width: 80,
@@ -258,6 +280,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#9D9998",
   },
+  dropdown: {
+    margin: 16,
+    height: 50,
+    minWidth: 190,
+    maxWidth: 190,
+    width: "auto",
+    borderWidth: 0,
+  },
 });
 
-export default Home;
+export default AdminProductList;
