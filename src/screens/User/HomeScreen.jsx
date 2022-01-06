@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -13,7 +13,14 @@ import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
 
-import { vegetablesAndFruits } from "../../utils/data";
+import {
+  vegetablesAndFruits,
+  dairyAndEggs,
+  meatAndSeaFood,
+  pantryFood,
+  bakeryFood,
+  frozenFood,
+} from "../../utils/data";
 const Home = ({ navigation }) => {
   const [activeFilter, setActiveFilter] = useState("weekly");
   const categoryList = [
@@ -74,6 +81,19 @@ const Home = ({ navigation }) => {
       key: "favorite",
     },
   ];
+  const favoriteItemList = useMemo(() => {
+    if (activeFilter === "favorite") {
+      const allProducts = [
+        ...vegetablesAndFruits,
+        ...dairyAndEggs,
+        ...meatAndSeaFood,
+        ...pantryFood,
+        ...bakeryFood,
+        ...frozenFood,
+      ];
+      return allProducts.filter((p) => p.isFavorite);
+    }
+  }, [activeFilter]);
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -126,14 +146,20 @@ const Home = ({ navigation }) => {
           numColumns={2}
           columnWrapperStyle={styles.categoryContainer}
           renderItem={({ item }) => {
-            return <CategoryItem category={item} navigation={navigation} />;
+            return (
+              <CategoryItem
+                activeFilter={activeFilter}
+                category={item}
+                navigation={navigation}
+              />
+            );
           }}
           keyExtractor={(item) => item.id}
         />
       ) : (
         <FlatList
           key={"_"}
-          data={[...vegetablesAndFruits]}
+          data={favoriteItemList}
           horizontal={false}
           numColumns={2}
           columnWrapperStyle={styles.categoryContainer}

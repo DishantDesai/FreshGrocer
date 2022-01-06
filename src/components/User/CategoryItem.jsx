@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 
-const CategoryItem = ({ category, navigation }) => {
+const CategoryItem = ({ category, activeFilter, navigation }) => {
   return (
     <View>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ProductList", { category })}
+        onPress={() =>
+          navigation.navigate("ProductList", { category, activeFilter })
+        }
       >
         <View style={styles.categoryBox}>
           <Image style={styles.categoryThumb} source={category.thumb} />

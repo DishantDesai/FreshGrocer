@@ -6,6 +6,12 @@ const ProductItem = ({ product }) => {
   const [count, setCount] = useState(0);
   const navigation = useNavigation();
 
+  const increaseQuantity = () => {
+    setCount(count + 1);
+  };
+  const decreaseQuantity = () => {
+    setCount(count - 1);
+  };
   return (
     <View>
       <TouchableOpacity
@@ -40,7 +46,7 @@ const ProductItem = ({ product }) => {
                   alignItems: "center",
                 }}
               >
-                <TouchableOpacity onPress={() => setCount(count - 1)}>
+                <TouchableOpacity onPress={decreaseQuantity}>
                   <View style={styles.countCircle}>
                     <Text style={styles.incrementDecrementIcon}>-</Text>
                   </View>
@@ -48,7 +54,7 @@ const ProductItem = ({ product }) => {
                 <Text style={count && styles.activeFontColor}>
                   {count > 9 ? count : `0${count}`}
                 </Text>
-                <TouchableOpacity onPress={() => setCount(count + 1)}>
+                <TouchableOpacity onPress={increaseQuantity}>
                   <View style={styles.countCircle}>
                     <Text style={styles.incrementDecrementIcon}>+</Text>
                   </View>
@@ -56,7 +62,7 @@ const ProductItem = ({ product }) => {
               </View>
             ) : (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity onPress={() => setCount(count + 1)}>
+                <TouchableOpacity onPress={increaseQuantity}>
                   <View style={styles.countCircle}>
                     <Text style={styles.incrementDecrementIcon}>+</Text>
                   </View>
