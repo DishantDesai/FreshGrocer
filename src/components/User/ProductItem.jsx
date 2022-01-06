@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product, addIcon = true }) => {
   const [count, setCount] = useState(0);
   const navigation = useNavigation();
 
@@ -15,7 +16,11 @@ const ProductItem = ({ product }) => {
   return (
     <View>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ProductDetail", { product })}
+        onPress={() =>
+          navigation.navigate(addIcon ? "ProductDetail" : "ProductEdit", {
+            product: product,
+          })
+        }
       >
         <View
           style={[count && { backgroundColor: "#F8A37C" }, styles.productBox]}
@@ -62,10 +67,24 @@ const ProductItem = ({ product }) => {
               </View>
             ) : (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TouchableOpacity onPress={increaseQuantity}>
-                  <View style={styles.countCircle}>
-                    <Text style={styles.incrementDecrementIcon}>+</Text>
-                  </View>
+                <TouchableOpacity
+                  onPress={() =>
+                    addIcon
+                      ? setCount(count + 1)
+                      : navigation.navigate("ProductEdit", {
+                          product,
+                        })
+                  }
+                >
+                  {addIcon ? (
+                    <View style={styles.countCircle}>
+                      <Text style={styles.incrementDecrementIcon}>+</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.countCircle2}>
+                      <AntDesign name="edit" size={16} color="white" />
+                    </View>
+                  )}
                 </TouchableOpacity>
               </View>
             )}
@@ -120,6 +139,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF4A03",
     width: 25,
     height: 25,
+    borderRadius: 50,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  countCircle2: {
+    backgroundColor: "#FF4A03",
+    // width:25,
+    // height:25,
+    padding: 5,
     borderRadius: 50,
     alignItems: "center",
     marginHorizontal: 5,

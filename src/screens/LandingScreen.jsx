@@ -27,6 +27,12 @@ const LandingScreen = ({ navigation }) => {
           <TouchableOpacity style={styles.buttonFacebook}>
             <Text style={styles.buttonText}>Sign In with Facebook</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("AdminProductList", {})}
+            style={styles.buttonAdmin}
+          >
+            <Text style={styles.buttonText}>Sign In as Admin</Text>
+          </TouchableOpacity>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >
@@ -97,6 +103,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#475993",
     borderRadius: 15,
     shadowColor: "rgba(0,0,0, .4)", // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS
+    elevation: 2, // Android
+    height: 45,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  buttonAdmin: {
+    backgroundColor: "#175394",
+    borderRadius: 15,
+    shadowColor: "rgba(0,0,0, .4)", //IOS
     shadowOffset: { height: 1, width: 1 }, // IOS
     shadowOpacity: 1, // IOS
     shadowRadius: 1, //IOS
