@@ -4,7 +4,7 @@
 
 1. https://www.figma.com/file/uAjbhyEsQAXudi98reMwG6/Fresh-Grocer?node-id=6%3A178
 
-# Task Division
+# Task Division for Deliverable 2
 
 **Nikhil Kumar(2095904)**
 
