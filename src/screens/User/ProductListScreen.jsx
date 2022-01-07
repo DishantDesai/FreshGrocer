@@ -120,94 +120,7 @@ const ProductListScreen = ({ route }) => {
         autoCapitalize="none"
       />
       {productList.length ? (
-        <View>
-          {category.type === "fruitsAndVegetables" && (
-            <View style={styles.categoryFilterContainer}>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.activeFilterBg]}
-              >
-                <Text
-                  style={[styles.activeFilterTextColor, styles.filterTypeText]}
-                >
-                  Vegetables
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.inactiveFilterBg]}
-              >
-                <Text
-                  style={[
-                    styles.inactiveFilterTextColor,
-                    styles.filterTypeText,
-                  ]}
-                >
-                  Fruits
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.inactiveFilterBg]}
-              >
-                <Text
-                  style={[
-                    styles.inactiveFilterTextColor,
-                    styles.filterTypeText,
-                  ]}
-                >
-                  Herbs
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.activeFilterBg]}
-              >
-                <Text
-                  style={[styles.activeFilterTextColor, styles.filterTypeText]}
-                >
-                  Salade kits
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.activeFilterBg]}
-              >
-                <Text
-                  style={[styles.activeFilterTextColor, styles.filterTypeText]}
-                >
-                  Vegetables
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <View style={styles.sortingContainer}>
-            <Dropdown
-              style={styles.dropdown}
-              containerStyle={styles.containerListStyle}
-              placeholderStyle={styles.activeColor}
-              selectedTextStyle={styles.activeColor}
-              data={data}
-              onChange={(item) => setSortOption(item.value)}
-              value={sortOption}
-              maxHeight={180}
-              labelField="label"
-              valueField="value"
-              placeholder="Sorting"
-              activeColor={THEME_COLOR}
-              iconColor={THEME_COLOR}
-              renderLeftIcon={() => (
-                <MaterialCommunityIcons
-                  style={styles.icon}
-                  name="sort"
-                  size={24}
-                />
-              )}
-              renderItem={renderItem}
-            />
-            {sortOption ? (
-              <TouchableOpacity onPress={() => setSortOption(null)}>
-                <AntDesign name="closecircleo" size={18} color={THEME_COLOR} />
-              </TouchableOpacity>
-            ) : (
-              <Text></Text>
-            )}
-          </View>
+        <View style={{ paddingBottom: 100 }}>
           <FlatList
             key={"_"}
             data={sortedProducts}
@@ -218,6 +131,112 @@ const ProductListScreen = ({ route }) => {
               return <ProductItem product={item} />;
             }}
             keyExtractor={(item) => item.id}
+            ListHeaderComponent={() => {
+              return (
+                <View>
+                  {category.type === "fruitsAndVegetables" && (
+                    <View style={styles.categoryFilterContainer}>
+                      <TouchableOpacity
+                        style={[styles.filterBtn, styles.activeFilterBg]}
+                      >
+                        <Text
+                          style={[
+                            styles.activeFilterTextColor,
+                            styles.filterTypeText,
+                          ]}
+                        >
+                          Vegetables
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.filterBtn, styles.inactiveFilterBg]}
+                      >
+                        <Text
+                          style={[
+                            styles.inactiveFilterTextColor,
+                            styles.filterTypeText,
+                          ]}
+                        >
+                          Fruits
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.filterBtn, styles.inactiveFilterBg]}
+                      >
+                        <Text
+                          style={[
+                            styles.inactiveFilterTextColor,
+                            styles.filterTypeText,
+                          ]}
+                        >
+                          Herbs
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.filterBtn, styles.activeFilterBg]}
+                      >
+                        <Text
+                          style={[
+                            styles.activeFilterTextColor,
+                            styles.filterTypeText,
+                          ]}
+                        >
+                          Salade kits
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.filterBtn, styles.activeFilterBg]}
+                      >
+                        <Text
+                          style={[
+                            styles.activeFilterTextColor,
+                            styles.filterTypeText,
+                          ]}
+                        >
+                          Vegetables
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  <View style={styles.sortingContainer}>
+                    <Dropdown
+                      style={styles.dropdown}
+                      containerStyle={styles.containerListStyle}
+                      placeholderStyle={styles.activeColor}
+                      selectedTextStyle={styles.activeColor}
+                      data={data}
+                      onChange={(item) => setSortOption(item.value)}
+                      value={sortOption}
+                      maxHeight={180}
+                      labelField="label"
+                      valueField="value"
+                      placeholder="Sorting"
+                      activeColor={THEME_COLOR}
+                      iconColor={THEME_COLOR}
+                      renderLeftIcon={() => (
+                        <MaterialCommunityIcons
+                          style={styles.icon}
+                          name="sort"
+                          size={24}
+                        />
+                      )}
+                      renderItem={renderItem}
+                    />
+                    {sortOption ? (
+                      <TouchableOpacity onPress={() => setSortOption(null)}>
+                        <AntDesign
+                          name="closecircleo"
+                          size={18}
+                          color={THEME_COLOR}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </View>
+                </View>
+              );
+            }}
           />
         </View>
       ) : loading ? (
