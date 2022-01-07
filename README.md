@@ -13,3 +13,9 @@ Create App UI design in Figma
 https://www.figma.com/file/uAjbhyEsQAXudi98reMwG6/Fresh-Grocer?node-id=0%3A1
 
 Created base code for Fresh Grocer App Landing Screen, SignUp Screen, AdminProductList Screen and Admin Product edit Screen.
+
+
+# Deliverable 2:
+Designed Uml Activity Diagram, Class Diagram and Sequence Diagram.
+
+Navdeep kaur (2092868)
