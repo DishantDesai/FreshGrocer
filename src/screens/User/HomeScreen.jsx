@@ -96,7 +96,7 @@ const Home = ({ navigation }) => {
   }, [activeFilter]);
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header hideBackArrow />
       <TextInput
         style={styles.input}
         placeholder="Search items..."

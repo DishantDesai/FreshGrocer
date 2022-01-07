@@ -22,7 +22,7 @@ export const vegetablesAndFruits = [
     ratings: 4.5,
     isFavorite: true,
     hasOffer: false,
-    isAddedToCart: false,
+    isAddedToCart: true,
     quantity: 0,
   },
   {
@@ -35,7 +35,7 @@ export const vegetablesAndFruits = [
     ratings: 3,
     isFavorite: true,
     hasOffer: true,
-    isAddedToCart: false,
+    isAddedToCart: true,
     quantity: 0,
   },
   {
@@ -74,7 +74,7 @@ export const vegetablesAndFruits = [
     ratings: 3,
     isFavorite: true,
     hasOffer: false,
-    isAddedToCart: false,
+    isAddedToCart: true,
     quantity: 0,
   },
   {
@@ -126,7 +126,7 @@ export const vegetablesAndFruits = [
     ratings: 3,
     isFavorite: true,
     hasOffer: true,
-    isAddedToCart: false,
+    isAddedToCart: true,
     quantity: 0,
   },
   {
@@ -230,7 +230,7 @@ export const vegetablesAndFruits = [
     ratings: 3,
     isFavorite: true,
     hasOffer: false,
-    isAddedToCart: false,
+    isAddedToCart: true,
     quantity: 0,
   },
   {

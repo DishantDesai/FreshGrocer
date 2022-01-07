@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,136 +6,120 @@ import {
   Text,
   Image,
   TextInput,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+
 import Header from "../../components/Header";
+import OrderSummary from "../../components/User/OrderSummary";
 import { Ionicons } from "@expo/vector-icons";
 import { THEME_COLOR } from "../../utils/constants";
+import {
+  vegetablesAndFruits,
+  dairyAndEggs,
+  meatAndSeaFood,
+  pantryFood,
+  bakeryFood,
+  frozenFood,
+} from "../../utils/data";
 
 const CartScreen = () => {
+  const [cartProductList, setCartProduct] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const cartProducts = [
+      ...vegetablesAndFruits,
+      ...dairyAndEggs,
+      ...meatAndSeaFood,
+      ...pantryFood,
+      ...bakeryFood,
+      ...frozenFood,
+    ].filter((product) => product.isAddedToCart);
+    setCartProduct(cartProducts);
+  }, []);
+  const calculateCartTotal = () => {
+    let total = 0;
+    cartProductList.forEach((c) => {
+      total += c.price;
+    });
+    return total;
+  };
+  const CartItem = ({ cartProduct }) => {
+    return (
+      <View style={styles.cartItemContainer}>
+        <View style={{ alignItems: "center", marginRight: 30 }}>
+          <TouchableOpacity>
+            <View style={styles.countCircle}>
+              <Text style={styles.incrementDecrementIcon}>-</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={{ color: "#9D9998", fontWeight: "bold" }}>01</Text>
+          <TouchableOpacity>
+            <View style={styles.countCircle}>
+              <Text style={styles.incrementDecrementIcon}>+</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.cartItemDetailContainer}>
+          <Image
+            style={styles.productThumb}
+            source={{
+              uri: cartProduct.url,
+            }}
+          />
+          <View>
+            <Text numberOfLines={1} style={styles.productTitle}>
+              {cartProduct.name}
+            </Text>
+            <Text style={styles.productPrice}>{cartProduct.price}</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.closeIcon}>
+          <Ionicons name="close" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Header hideCart title="Cart" />
-      <View style={{ marginTop: 40 }}>
-        <View style={styles.cartItemContainer}>
-          <View style={{ alignItems: "center", marginRight: 30 }}>
-            <TouchableOpacity>
-              <View style={styles.countCircle}>
-                <Text style={styles.incrementDecrementIcon}>-</Text>
-              </View>
-            </TouchableOpacity>
-            <Text style={{ color: "#9D9998", fontWeight: "bold" }}>01</Text>
-            <TouchableOpacity>
-              <View style={styles.countCircle}>
-                <Text style={styles.incrementDecrementIcon}>+</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.cartItemDetailContainer}>
-            <Image
-              style={styles.productThumb}
-              source={{
-                uri: "https://i5.walmartimages.ca/images/Thumbnails/580/6_r/875806_R.jpg",
-              }}
-            />
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={cartProductList}
+        keyExtractor={(data) => data.id}
+        renderItem={({ item }) => {
+          return <CartItem cartProduct={item} />;
+        }}
+        ListFooterComponent={() => {
+          return (
             <View>
-              <Text style={styles.productTitle}>Fresh Apple</Text>
-              <Text style={styles.productPrice}>$5.97</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.closeIcon}>
-            <Ionicons name="close" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.cartItemContainer}>
-          <View style={{ alignItems: "center", marginRight: 30 }}>
-            <TouchableOpacity>
-              <View style={styles.countCircle}>
-                <Text style={styles.incrementDecrementIcon}>-</Text>
+              <View>
+                <TextInput
+                  style={styles.input}
+                  autoCapitalize={"characters"}
+                  placeholder="Promocode"
+                />
+                <TouchableOpacity style={styles.applyBtn}>
+                  <Text style={{ color: "white" }}>Apply</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-            <Text style={{ color: "#9D9998", fontWeight: "bold" }}>01</Text>
-            <TouchableOpacity>
-              <View style={styles.countCircle}>
-                <Text style={styles.incrementDecrementIcon}>+</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.cartItemDetailContainer}>
-            <Image
-              style={styles.productThumb}
-              source={{
-                uri: "https://i5.walmartimages.ca/images/Thumbnails/580/6_r/875806_R.jpg",
-              }}
-            />
-            <View>
-              <Text style={styles.productTitle}>Fresh Apple</Text>
-              <Text style={styles.productPrice}>$5.97</Text>
+              <OrderSummary cartTotal={calculateCartTotal()} />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Checkout", {
+                    cartTotal: calculateCartTotal(),
+                  })
+                }
+                style={styles.checkOutBtn}
+              >
+                <Text style={{ color: "white" }}>Proceed to Checkout</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-          <TouchableOpacity style={styles.closeIcon}>
-            <Ionicons name="close" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TextInput
-            style={styles.input}
-            autoCapitalize={"characters"}
-            placeholder="Promocode"
-          />
-          <TouchableOpacity style={styles.applyBtn}>
-            <Text style={{ color: "white" }}>Apply</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ marginTop: 40 }}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>Card Title</Text>
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>$11.94</Text>
-          </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>Tax</Text>
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>$5.00</Text>
-          </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>Delivery</Text>
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>$5.00</Text>
-          </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>
-              Promotion Discount
-            </Text>
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>$0.00</Text>
-          </View>
-          <View
-            style={{
-              borderBottomColor: "#9D9998",
-              borderBottomWidth: 1,
-              marginVertical: 16,
-            }}
-          />
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={{ color: "#9D9998", lineHeight: 25 }}>Subtotal</Text>
-            <Text
-              style={{ color: "#9D9998", lineHeight: 25, fontWeight: "bold" }}
-            >
-              $21.94
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.checkOutBtn}>
-          <Text style={{ color: "white" }}>Proceed to Checkout</Text>
-        </TouchableOpacity>
-      </View>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -145,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 14,
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
     backgroundColor: "white",
   },
   cartItemContainer: {

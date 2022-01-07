@@ -13,7 +13,8 @@ import Cart from "./src/screens/User/CartScreen";
 import ProductDetail from "./src/screens/User/ProductDetailScreen";
 import AdminProductList from "./src/screens/Admin/AdminProductListScreen";
 import ProductEditScreen from "./src/screens/Admin/ProductEditScreen";
-
+import Checkout from "./src/screens/User/CheckoutScreen";
+import Order from "./src/screens/User/OrderScreen";
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -50,6 +51,16 @@ const App = () => {
             name="Cart"
             options={{ headerShown: false }}
             component={Cart}
+          />
+          <Stack.Screen
+            name="Checkout"
+            options={{ headerShown: false }}
+            component={Checkout}
+          />
+          <Stack.Screen
+            name="Order"
+            options={{ headerShown: false }}
+            component={Order}
           />
           <Stack.Screen
             name="ProductDetail"
