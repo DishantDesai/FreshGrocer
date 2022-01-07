@@ -1,15 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
+import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { THEME_COLOR } from "../utils/constants";
-import { useNavigation } from "@react-navigation/native";
+import {
+  vegetablesAndFruits,
+  dairyAndEggs,
+  meatAndSeaFood,
+  pantryFood,
+  bakeryFood,
+  frozenFood,
+} from "../utils/data";
 
-const Header = ({ title, hideCart }) => {
+const Header = ({ title, hideCart, hideBackArrow }) => {
+  const [cartItemCount, setCartItemCount] = useState(0);
   const navigation = useNavigation();
-
+  useEffect(() => {
+    const cartProducts = [
+      ...vegetablesAndFruits,
+      ...dairyAndEggs,
+      ...meatAndSeaFood,
+      ...pantryFood,
+      ...bakeryFood,
+      ...frozenFood,
+    ].filter((product) => product.isAddedToCart);
+    setCartItemCount(cartProducts.length);
+  }, []);
   return (
-    <View style={styles.containerStyle}>
+    <View>
+      {!hideBackArrow && (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.pop();
+          }}
+          style={{ position: "absolute", top: 10, zIndex: 10 }}
+        >
+          <Feather name="arrow-left" size={20} style={{ fontSize: 34 }} />
+        </TouchableOpacity>
+      )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>
       {!hideCart && (
         <TouchableOpacity
@@ -18,9 +47,13 @@ const Header = ({ title, hideCart }) => {
         >
           <View style={{ position: "relative" }}>
             <Feather name="shopping-cart" size={28} color="black" />
-            <View style={styles.cartCount}>
-              <Text style={{ fontSize: 10, color: "white" }}>1</Text>
-            </View>
+            {cartItemCount > 0 && (
+              <View style={styles.cartCount}>
+                <Text style={{ fontSize: 10, color: "white" }}>
+                  {cartItemCount}
+                </Text>
+              </View>
+            )}
           </View>
         </TouchableOpacity>
       )}
