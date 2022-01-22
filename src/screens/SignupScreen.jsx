@@ -65,7 +65,7 @@ const SignupScreen = ({ navigation }) => {
             validationSchema={signUPValidationSchema}
             onSubmit={onRegisterPress}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
+            {({ handleSubmit }) => (
               <View>
                 <Field
                   component={CustomInput}
