@@ -1,85 +1,23 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
-//Screen imports
-import Landing from "./src/screens/LandingScreen";
-import Login from "./src/screens/LoginScreen";
-import Signup from "./src/screens/SignupScreen";
-import Home from "./src/screens/User/HomeScreen";
-import ProductList from "./src/screens/User/ProductListScreen";
-import Cart from "./src/screens/User/CartScreen";
-import ProductDetail from "./src/screens/User/ProductDetailScreen";
-import AdminProductList from "./src/screens/Admin/AdminProductListScreen";
-import ProductEditScreen from "./src/screens/Admin/ProductEditScreen";
-import Checkout from "./src/screens/User/CheckoutScreen";
-import Order from "./src/screens/User/OrderScreen";
+import { Router } from "./src/routes/routes";
+import { store, persistor } from "./src/redux/store";
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Landing">
-          <Stack.Screen
-            name="Landing"
-            options={{ headerShown: false }}
-            component={Landing}
-          />
-          <Stack.Screen
-            name="Signup"
-            options={{ headerShown: false }}
-            component={Signup}
-          />
-          <Stack.Screen
-            name="Login"
-            options={{ headerShown: false }}
-            component={Login}
-          />
-          <Stack.Screen
-            name="Home"
-            options={{ headerShown: false }}
-            component={Home}
-          />
-          <Stack.Screen
-            name="ProductList"
-            options={{ headerShown: false }}
-            component={ProductList}
-          />
-          <Stack.Screen
-            name="Cart"
-            options={{ headerShown: false }}
-            component={Cart}
-          />
-          <Stack.Screen
-            name="Checkout"
-            options={{ headerShown: false }}
-            component={Checkout}
-          />
-          <Stack.Screen
-            name="Order"
-            options={{ headerShown: false }}
-            component={Order}
-          />
-          <Stack.Screen
-            name="ProductDetail"
-            options={{ headerShown: false }}
-            component={ProductDetail}
-          />
-          <Stack.Screen
-            name="AdminProductList"
-            options={{ headerShown: false }}
-            component={AdminProductList}
-          />
-          <Stack.Screen
-            name="ProductEdit"
-            options={{ headerShown: false }}
-            component={ProductEditScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <Router />
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 
