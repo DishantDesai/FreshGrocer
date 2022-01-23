@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -17,6 +17,9 @@ import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
 import { THEME_COLOR } from "../../utils/constants";
 
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
+
 import {
   vegetablesAndFruits,
   dairyAndEggs,
@@ -25,7 +28,12 @@ import {
   bakeryFood,
   frozenFood,
 } from "../../utils/data";
+import AdminProductItem from "./AdminProductItem";
 const AdminProductList = ({ navigation, route }) => {
+  const productsCollection = collection(db, "products");
+
+  const [products, setProducts] = useState([]);
+
   // const { category } = route.params;
   const [sortOption, setSortOption] = useState(null);
   const data = [
@@ -35,6 +43,18 @@ const AdminProductList = ({ navigation, route }) => {
   ];
   const [activeFilter, setActiveFilter] = useState("weekly");
   const [productList, setProductList] = useState([]);
+
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection);
+
+    setProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  console.log("products", products);
 
   const categoryList = [
     {
@@ -113,7 +133,7 @@ const AdminProductList = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} />
+      <Header hideCart={true} addNavigate={true} hideBackArrow={true} />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
@@ -151,12 +171,19 @@ const AdminProductList = ({ navigation, route }) => {
 
       <FlatList
         key={"_"}
-        data={[...vegetablesAndFruits]}
+        data={products}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={styles.categoryContainer}
         renderItem={({ item }) => {
-          return <ProductItem product={item} addIcon={false} />;
+          return (
+            <AdminProductItem
+              product={item}
+              addIcon={false}
+              deleteIcon={true}
+              getProducts={getProducts}
+            />
+          );
         }}
         keyExtractor={(item) => item.id}
       />
@@ -291,3 +318,4 @@ const styles = StyleSheet.create({
 });
 
 export default AdminProductList;
+c

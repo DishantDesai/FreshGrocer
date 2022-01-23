@@ -82,6 +82,21 @@ export const AuthStack = () => {
         options={{ headerShown: false }}
         component={Login}
       />
+      <Stack.Screen
+        name="AdminProductList"
+        options={{ headerShown: false }}
+        component={AdminProductList}
+      />
+      <Stack.Screen
+        name="AddProducts"
+        options={{ headerShown: false }}
+        component={AddProducts}
+      />
+      <Stack.Screen
+        name="ProductEdit"
+        options={{ headerShown: false }}
+        component={ProductEditScreen}
+      />
     </Stack.Navigator>
   );
 };
