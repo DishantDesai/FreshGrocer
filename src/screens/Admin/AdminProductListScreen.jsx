@@ -17,9 +17,6 @@ import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
 import { THEME_COLOR } from "../../utils/constants";
 
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase/config";
-
 import {
   vegetablesAndFruits,
   dairyAndEggs,
@@ -29,11 +26,9 @@ import {
   frozenFood,
 } from "../../utils/data";
 import AdminProductItem from "./AdminProductItem";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
 const AdminProductList = ({ navigation, route }) => {
-  const productsCollection = collection(db, "products");
-
-  const [products, setProducts] = useState([]);
-
   // const { category } = route.params;
   const [sortOption, setSortOption] = useState(null);
   const data = [
@@ -43,6 +38,9 @@ const AdminProductList = ({ navigation, route }) => {
   ];
   const [activeFilter, setActiveFilter] = useState("weekly");
   const [productList, setProductList] = useState([]);
+  const productsCollection = collection(db, "products");
+
+  const [products, setProducts] = useState([]);
 
   const getProducts = async () => {
     const data = await getDocs(productsCollection);
@@ -53,8 +51,6 @@ const AdminProductList = ({ navigation, route }) => {
   useEffect(() => {
     getProducts();
   }, []);
-
-  console.log("products", products);
 
   const categoryList = [
     {
@@ -133,7 +129,12 @@ const AdminProductList = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} addNavigate={true} hideBackArrow={true} />
+      <Header
+        hideCart={true}
+        hidePlusIcon={false}
+        hideBackArrow={true}
+        addNavigate={false}
+      />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
@@ -318,4 +319,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdminProductList;
-c

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -16,7 +16,7 @@ import { db } from "../../firebase/config";
 
 const ProductEditScreen = ({ navigation, route }) => {
   const { product } = route.params;
-  const [checked, setChecked] = React.useState("first");
+  const [checked, setChecked] = useState("first");
   const [productPrice, setProductPrice] = useState(product?.price);
 
   const updateProduct = async (id, price) => {

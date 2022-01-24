@@ -31,6 +31,7 @@ const AdminProductItem = ({
       getProducts();
     } catch (error) {
       console.log("id", id);
+      console.log("eror", error);
     }
   };
 

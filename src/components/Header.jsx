@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
 import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import { THEME_COLOR } from "../utils/constants";
 import {
   vegetablesAndFruits,
@@ -13,7 +13,13 @@ import {
   frozenFood,
 } from "../utils/data";
 
-const Header = ({ title, hideCart, hideBackArrow }) => {
+const Header = ({
+  title,
+  hideCart,
+  hideBackArrow,
+  hidePlusIcon = true,
+  addNavigate,
+}) => {
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigation = useNavigation();
   useEffect(() => {
@@ -37,6 +43,16 @@ const Header = ({ title, hideCart, hideBackArrow }) => {
           style={{ position: "absolute", top: 10, zIndex: 10 }}
         >
           <Feather name="arrow-left" size={20} style={{ fontSize: 34 }} />
+        </TouchableOpacity>
+      )}
+      {!hidePlusIcon && (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("AddProducts");
+          }}
+          // style={{ position: "absolute", top: 10, zIndex: 10 }}
+        >
+          <AntDesign name="pluscircleo" size={24} color="black" />
         </TouchableOpacity>
       )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>

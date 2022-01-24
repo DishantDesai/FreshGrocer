@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Dropdown } from "react-native-element-dropdown";
@@ -44,64 +45,66 @@ const AddProducts = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} addNavigate={false} hideBackArrow={true} />
+      <ScrollView>
+        <Header hideCart={true} addNavigate={false} hideBackArrow={true} />
 
-      <View style={{ marginTop: 20 }}>
-        <Text
-          style={{
-            color: "black",
-            fontWeight: "bold",
-            fontSize: 20,
-            paddingVertical: 10,
-          }}
-        >
-          Add Product
-        </Text>
-        <TextInput
-          value={productName}
-          onChangeText={(text) => setProductName(text)}
-          style={styles.input}
-          placeholder="Add Name"
-        />
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <TextInput
-          value={productDescription}
-          onChangeText={(text) => setProductDescription(text)}
-          style={styles.input}
-          placeholder="Add Description"
-        />
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <TextInput
-          value={productPrice}
-          onChangeText={(text) => setProductPrice(text)}
-          style={styles.input}
-          placeholder="Add price"
-        />
-      </View>
+        <View style={{ marginTop: 20 }}>
+          <Text
+            style={{
+              color: "black",
+              fontWeight: "bold",
+              fontSize: 20,
+              paddingVertical: 10,
+            }}
+          >
+            Add Product
+          </Text>
+          <TextInput
+            value={productName}
+            onChangeText={(text) => setProductName(text)}
+            style={styles.input}
+            placeholder="Add Name"
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            value={productDescription}
+            onChangeText={(text) => setProductDescription(text)}
+            style={styles.input}
+            placeholder="Add Description"
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            value={productPrice}
+            onChangeText={(text) => setProductPrice(text)}
+            style={styles.input}
+            placeholder="Add price"
+          />
+        </View>
 
-      <View style={{ marginTop: 10 }}>
-        <TextInput
-          value={productQuantity}
-          onChangeText={(text) => setProductQuantity(text)}
-          style={styles.input}
-          placeholder="Quantity"
-        />
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <TextInput
-          value={productImage}
-          onChangeText={(text) => setProductImage(text)}
-          style={styles.input}
-          placeholder="Add product image"
-        />
-      </View>
-      <View style={{ flex: 1, justifyContent: "flex-end" }}>
-        <TouchableOpacity style={styles.button} onPress={createProduct}>
-          <Text style={styles.buttonText}>Save and Exit</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            value={productQuantity}
+            onChangeText={(text) => setProductQuantity(text)}
+            style={styles.input}
+            placeholder="Quantity"
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            value={productImage}
+            onChangeText={(text) => setProductImage(text)}
+            style={styles.input}
+            placeholder="Add product image"
+          />
+        </View>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <TouchableOpacity style={styles.button} onPress={createProduct}>
+            <Text style={styles.buttonText}>Save and Exit</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
