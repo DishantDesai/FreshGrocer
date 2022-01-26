@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   FlatList,
+  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -23,10 +24,15 @@ import {
   bakeryFood,
   frozenFood,
 } from "../../utils/data";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCart } from "../../redux/actions/cart";
 
 const CartScreen = () => {
+  const dispatch = useDispatch();
   const [cartProductList, setCartProduct] = useState([]);
+  const [cartTotal, setCartTotal] = useState("");
   const navigation = useNavigation();
+  const { items } = useSelector((state) => state.cart.itemsSelected);
 
   useEffect(() => {
     const cartProducts = [
@@ -41,7 +47,7 @@ const CartScreen = () => {
   }, []);
   const calculateCartTotal = () => {
     let total = 0;
-    cartProductList.forEach((c) => {
+    items.forEach((c) => {
       total += c.price;
     });
     return total;
@@ -76,7 +82,10 @@ const CartScreen = () => {
             <Text style={styles.productPrice}>{cartProduct.price}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.closeIcon}>
+        <TouchableOpacity
+          onPress={() => dispatch(removeFromCart(cartProduct))}
+          style={styles.closeIcon}
+        >
           <Ionicons name="close" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -84,10 +93,10 @@ const CartScreen = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart title="Cart" />
+      <Header hideCart title="Cart" hideBackArrow={false} hidePlusIcon={true} />
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={cartProductList}
+        data={items}
         keyExtractor={(data) => data.id}
         renderItem={({ item }) => {
           return <CartItem cartProduct={item} />;
@@ -107,11 +116,19 @@ const CartScreen = () => {
               </View>
               <OrderSummary cartTotal={calculateCartTotal()} />
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("Checkout", {
-                    cartTotal: calculateCartTotal(),
-                  })
-                }
+                onPress={() => {
+                  if (items.length > 0) {
+                    navigation.navigate("Checkout", {
+                      cartTotal: calculateCartTotal(),
+                    });
+                  } else {
+                    ToastAndroid.showWithGravity(
+                      "Cart is empty",
+                      ToastAndroid.SHORT,
+                      ToastAndroid.BOTTOM
+                    );
+                  }
+                }}
                 style={styles.checkOutBtn}
               >
                 <Text style={{ color: "white" }}>Proceed to Checkout</Text>

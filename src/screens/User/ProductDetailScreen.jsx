@@ -1,18 +1,30 @@
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import Header from "../../components/Header";
 import { AntDesign } from "@expo/vector-icons";
 import { Rating } from "react-native-ratings";
 import { THEME_COLOR } from "../../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../redux/actions/cart";
 
 const ProductDetailScreen = ({ route }) => {
+  const dispatch = useDispatch();
   const { product } = route.params;
   const [count, setCount] = useState(0);
 
+  const { itemsSelected } = useSelector((state) => state.cart);
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header hidePlusIcon={true} />
       <View style={styles.ratingContainer}>
         {product.isFavorite ? (
           <AntDesign name="heart" size={24} color="red" />
@@ -70,7 +82,26 @@ const ProductDetailScreen = ({ route }) => {
           </View>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.addToCartBtn}>
+      <TouchableOpacity
+        onPress={() => {
+          const filterItem = itemsSelected.items.filter(
+            (item) => item.id === product.id
+          );
+
+          if (filterItem.length > 0) {
+            ToastAndroid.showWithGravity(
+              "Already added to cart",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+          } else {
+            dispatch(addToCart(product));
+          }
+
+          //
+        }}
+        style={styles.addToCartBtn}
+      >
         <Text style={{ color: "white" }}>Add to cart</Text>
       </TouchableOpacity>
     </SafeAreaView>

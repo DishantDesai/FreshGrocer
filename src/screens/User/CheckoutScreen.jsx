@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Alert,
+  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -14,12 +15,19 @@ import { Feather } from "@expo/vector-icons";
 import Header from "../../components/Header";
 import OrderSummary from "../../components/User/OrderSummary";
 import { THEME_COLOR } from "../../utils/constants";
+import { db } from "../../firebase/config";
+import { addDoc, collection } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCart } from "../../redux/actions/cart";
 
 const CheckoutScreen = ({ route }) => {
+  const dispatch = useDispatch();
   const { cartTotal } = route.params;
   const DEFAULT_ADDRESS =
     "4717 Pierre-de coubertin avenue, Montreal,Quebec H1A 1A9";
   const navigation = useNavigation();
+
+  const { items } = useSelector((state) => state.cart.itemsSelected);
 
   const [isFocused, setIsFocus] = useState(false);
   const [address, setAddress] = useState(DEFAULT_ADDRESS);
@@ -27,9 +35,32 @@ const CheckoutScreen = ({ route }) => {
     setAddress(DEFAULT_ADDRESS);
     setIsFocus(false);
   };
+
+  const placeOrderToFirebase = async () => {
+    const addOrders = collection(db, "orders");
+
+    try {
+      const data = await addDoc(addOrders, {
+        items: items,
+        createdAt: new Date(),
+        status: "current",
+      });
+
+      const orderId = data._key?.path?.segments[1];
+
+      // dispatch(clearCart());
+
+      alert("Order placed successfully");
+      navigation.navigate("Order", {
+        orderId,
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart title="Checkout" />
+      <Header hideCart title="Checkout" hidePlusIcon={true} />
       <View style={styles.mainViewStyle}>
         <View>
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>
@@ -133,7 +164,8 @@ const CheckoutScreen = ({ route }) => {
                   {
                     text: "OK",
                     onPress: () => {
-                      navigation.navigate("Order");
+                      placeOrderToFirebase();
+                      // navigation.navigate("Order");
                     },
                   },
                 ]

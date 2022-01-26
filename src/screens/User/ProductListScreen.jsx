@@ -24,12 +24,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign, Feather } from "@expo/vector-icons";
 
 import { THEME_COLOR } from "../../utils/constants";
+import { useDispatch } from "react-redux";
 const data = [
   { label: "Price low to high", value: "priceDesc" },
   { label: "Price high to low", value: "priceAsc" },
   { label: "Top rated", value: "topRated" },
 ];
 const ProductListScreen = ({ route }) => {
+  const dispatch = useDispatch();
   const { category, activeFilter } = route.params;
   const [productList, setProductList] = useState([]);
   const [sortOption, setSortOption] = useState(null);
@@ -113,7 +115,7 @@ const ProductListScreen = ({ route }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header hidePlusIcon={true} />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
