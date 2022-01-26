@@ -14,6 +14,7 @@ import AdminProductList from "../screens/Admin/AdminProductListScreen";
 import ProductEditScreen from "../screens/Admin/ProductEditScreen";
 import Checkout from "../screens/User/CheckoutScreen";
 import Order from "../screens/User/OrderScreen";
+import AddProducts from "../screens/Admin/AddProducts"
 
 const Stack = createNativeStackNavigator();
 
@@ -81,6 +82,21 @@ export const AuthStack = () => {
         name="Login"
         options={{ headerShown: false }}
         component={Login}
+      />
+      <Stack.Screen
+        name="AdminProductList"
+        options={{ headerShown: false }}
+        component={AdminProductList}
+      />
+      <Stack.Screen
+        name="AddProducts"
+        options={{ headerShown: false }}
+        component={AddProducts}
+      />
+      <Stack.Screen
+        name="ProductEdit"
+        options={{ headerShown: false }}
+        component={ProductEditScreen}
       />
     </Stack.Navigator>
   );
