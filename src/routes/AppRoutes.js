@@ -17,6 +17,27 @@ import Order from "../screens/User/OrderScreen";
 
 const Stack = createNativeStackNavigator();
 
+export const AdminStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="AdminProductList">
+      <Stack.Screen
+        name="ProductDetail"
+        options={{ headerShown: false }}
+        component={ProductDetail}
+      />
+      <Stack.Screen
+        name="AdminProductList"
+        options={{ headerShown: false }}
+        component={AdminProductList}
+      />
+      <Stack.Screen
+        name="ProductEdit"
+        options={{ headerShown: false }}
+        component={ProductEditScreen}
+      />
+    </Stack.Navigator>
+  );
+};
 export const AppStack = () => {
   return (
     <Stack.Navigator>
@@ -49,16 +70,6 @@ export const AppStack = () => {
         name="ProductDetail"
         options={{ headerShown: false }}
         component={ProductDetail}
-      />
-      <Stack.Screen
-        name="AdminProductList"
-        options={{ headerShown: false }}
-        component={AdminProductList}
-      />
-      <Stack.Screen
-        name="ProductEdit"
-        options={{ headerShown: false }}
-        component={ProductEditScreen}
       />
     </Stack.Navigator>
   );

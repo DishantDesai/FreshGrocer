@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, AntDesign } from "@expo/vector-icons";
+import { getAuth, signOut } from "firebase/auth";
 import { THEME_COLOR } from "../utils/constants";
 import {
   vegetablesAndFruits,
@@ -12,10 +20,12 @@ import {
   bakeryFood,
   frozenFood,
 } from "../utils/data";
-
+import { signOutSuccess } from "../redux/actions/auth";
 const Header = ({ title, hideCart, hideBackArrow }) => {
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const cartProducts = [
       ...vegetablesAndFruits,
@@ -27,6 +37,20 @@ const Header = ({ title, hideCart, hideBackArrow }) => {
     ].filter((product) => product.isAddedToCart);
     setCartItemCount(cartProducts.length);
   }, []);
+  const logout = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        dispatch(signOutSuccess());
+      })
+      .catch((error) => {
+        ToastAndroid.showWithGravity(
+          error.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      });
+  };
   return (
     <View>
       {!hideBackArrow && (
@@ -40,32 +64,39 @@ const Header = ({ title, hideCart, hideBackArrow }) => {
         </TouchableOpacity>
       )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>
-      {!hideCart && (
-        <TouchableOpacity
-          style={styles.cartContainer}
-          onPress={() => navigation.navigate("Cart")}
-        >
-          <View style={{ position: "relative" }}>
-            <Feather name="shopping-cart" size={28} color="black" />
-            {cartItemCount > 0 && (
-              <View style={styles.cartCount}>
-                <Text style={{ fontSize: 10, color: "white" }}>
-                  {cartItemCount}
-                </Text>
-              </View>
-            )}
-          </View>
+      <View style={styles.cartContainer}>
+        {!hideCart && (
+          <TouchableOpacity
+            style={{ marginRight: 10 }}
+            onPress={() => navigation.navigate("Cart")}
+          >
+            <View style={{ position: "relative" }}>
+              <Feather name="shopping-cart" size={28} color="black" />
+              {cartItemCount > 0 && (
+                <View style={styles.cartCount}>
+                  <Text style={{ fontSize: 10, color: "white" }}>
+                    {cartItemCount}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={logout}>
+          <AntDesign name="poweroff" size={28} color="black" />
         </TouchableOpacity>
-      )}
+      </View>
     </View>
   );
 };
 
 Header.propTypes = {
   hideCart: PropTypes.bool,
+  hideBackArrow: PropTypes.bool,
 };
 Header.defaultProps = {
   hideCart: false,
+  hideBackArrow: false,
 };
 const styles = StyleSheet.create({
   logo: {
@@ -78,6 +109,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 0,
+    flexDirection: "row",
   },
   cartCount: {
     width: 14,

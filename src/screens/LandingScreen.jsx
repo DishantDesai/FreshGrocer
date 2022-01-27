@@ -27,12 +27,6 @@ const LandingScreen = ({ navigation }) => {
           <TouchableOpacity style={styles.buttonFacebook}>
             <Text style={styles.buttonText}>Sign In with Facebook</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AdminProductList", {})}
-            style={styles.buttonAdmin}
-          >
-            <Text style={styles.buttonText}>Sign In as Admin</Text>
-          </TouchableOpacity>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >

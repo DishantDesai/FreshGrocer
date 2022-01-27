@@ -113,7 +113,7 @@ const AdminProductList = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} />
+      <Header hideCart={true} hideBackArrow />
       <TextInput
         style={styles.input}
         placeholder="Search items..."

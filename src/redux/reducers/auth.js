@@ -2,6 +2,7 @@ import {
   SIGNIN_SUCCESS,
   ON_HIDE_LOADER,
   ON_SHOW_LOADER,
+  SIGNOUT_SUCCESS,
 } from "../../utils/ActionTypes";
 
 const INIT_STATE = {
@@ -32,6 +33,14 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         loader: false,
+      };
+    }
+    case SIGNOUT_SUCCESS: {
+      return {
+        ...state,
+        user: false,
+        isLogin: false,
+        accessToken: null,
       };
     }
     default:
