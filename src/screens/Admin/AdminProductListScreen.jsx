@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -25,6 +25,9 @@ import {
   bakeryFood,
   frozenFood,
 } from "../../utils/data";
+import AdminProductItem from "./AdminProductItem";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
 const AdminProductList = ({ navigation, route }) => {
   // const { category } = route.params;
   const [sortOption, setSortOption] = useState(null);
@@ -35,6 +38,19 @@ const AdminProductList = ({ navigation, route }) => {
   ];
   const [activeFilter, setActiveFilter] = useState("weekly");
   const [productList, setProductList] = useState([]);
+  const productsCollection = collection(db, "products");
+
+  const [products, setProducts] = useState([]);
+
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection);
+
+    setProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   const categoryList = [
     {
@@ -113,7 +129,12 @@ const AdminProductList = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} hideBackArrow />
+      <Header
+        hideCart={true}
+        hidePlusIcon={false}
+        hideBackArrow={true}
+        addNavigate={false}
+      />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
@@ -151,12 +172,19 @@ const AdminProductList = ({ navigation, route }) => {
 
       <FlatList
         key={"_"}
-        data={[...vegetablesAndFruits]}
+        data={products}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={styles.categoryContainer}
         renderItem={({ item }) => {
-          return <ProductItem product={item} addIcon={false} />;
+          return (
+            <AdminProductItem
+              product={item}
+              addIcon={false}
+              deleteIcon={true}
+              getProducts={getProducts}
+            />
+          );
         }}
         keyExtractor={(item) => item.id}
       />

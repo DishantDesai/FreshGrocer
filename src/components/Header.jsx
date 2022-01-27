@@ -21,7 +21,13 @@ import {
   frozenFood,
 } from "../utils/data";
 import { signOutSuccess } from "../redux/actions/auth";
-const Header = ({ title, hideCart, hideBackArrow }) => {
+const Header = ({
+  title,
+  hideCart,
+  hideBackArrow,
+  hidePlusIcon = true,
+  addNavigate,
+}) => {
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -61,6 +67,16 @@ const Header = ({ title, hideCart, hideBackArrow }) => {
           style={{ position: "absolute", top: 10, zIndex: 10 }}
         >
           <Feather name="arrow-left" size={20} style={{ fontSize: 34 }} />
+        </TouchableOpacity>
+      )}
+      {!hidePlusIcon && (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("AddProducts");
+          }}
+          // style={{ position: "absolute", top: 10, zIndex: 10 }}
+        >
+          <AntDesign name="pluscircleo" size={24} color="black" />
         </TouchableOpacity>
       )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -11,10 +11,20 @@ import {
 } from "react-native";
 import Header from "../../components/Header";
 import { RadioButton } from "react-native-paper";
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const ProductEditScreen = ({ navigation, route }) => {
   const { product } = route.params;
-  const [checked, setChecked] = React.useState("first");
+  const [checked, setChecked] = useState("first");
+  const [productPrice, setProductPrice] = useState(product?.price);
+
+  const updateProduct = async (id, price) => {
+    const productDoc = doc(db, "products", id);
+    const newFields = { price };
+    await updateDoc(productDoc, newFields);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header hideCart={true} />
@@ -60,54 +70,22 @@ const ProductEditScreen = ({ navigation, route }) => {
         >
           Item Price
         </Text>
-        <TextInput style={styles.input} placeholder="edit price" />
-      </View>
-      <View>
-        <Text
-          style={{
-            color: "black",
-            fontWeight: "bold",
-            fontSize: 20,
-            paddingVertical: 10,
-          }}
-        >
-          Order Type
-        </Text>
-        <View style={{ flexDirection: "row" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginRight: 20,
-            }}
-          >
-            <RadioButton
-              value="first"
-              label="Carto Base MAp"
-              status={checked === "first" ? "checked" : "unchecked"}
-              onPress={() => {
-                setChecked("first");
-              }}
-            />
-            <Text>Delivery</Text>
-          </View>
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <RadioButton
-              value="second"
-              status={checked === "second" ? "checked" : "unchecked"}
-              onPress={() => {
-                setChecked("second");
-              }}
-            />
-            <Text>Pick Up</Text>
-          </View>
-        </View>
+        <TextInput
+          value={productPrice}
+          onChangeText={(text) => setProductPrice(text)}
+          style={styles.input}
+          placeholder="edit price"
+        />
       </View>
+
       <View style={{ flex: 1, justifyContent: "flex-end" }}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("AdminProductList")}
+          onPress={() => {
+            updateProduct(product.id, productPrice);
+            navigation.navigate("AdminProductList");
+          }}
         >
           <Text style={styles.buttonText}>Save and Exit</Text>
         </TouchableOpacity>
