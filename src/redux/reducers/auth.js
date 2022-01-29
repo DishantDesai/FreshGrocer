@@ -17,7 +17,7 @@ export default (state = INIT_STATE, action) => {
     case SIGNIN_SUCCESS: {
       return {
         ...state,
-        accessToken: action.payload.stsTokenManager.accessToken,
+        accessToken: action.payload.accessToken,
         user: action.payload,
         isLogin: true,
         loader: false,

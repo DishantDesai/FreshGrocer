@@ -32,8 +32,8 @@ const SignupScreen = ({ navigation }) => {
           fullName,
           address,
           phoneNumber,
+          created_at: Date.now(),
         };
-        console.log("call signup", data);
         addDoc(collection(db, "users"), data)
           .then(() => {
             navigation.navigate("Home");

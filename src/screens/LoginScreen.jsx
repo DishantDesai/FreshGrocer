@@ -38,12 +38,13 @@ const Home = ({ navigation }) => {
         //Redirect based on fetched user if it is Admin or normal user
         if (docSnap.exists()) {
           const userSnap = docSnap.data();
-          // if (userSnap.isAdmin) {
-          //   navigation.navigate("AdminProductList");
-          // } else {
-          //   navigation.navigate("Home");
-          // }
-          dispatch(signInSuccess({ ...user, ...userSnap }));
+          dispatch(
+            signInSuccess({
+              accessToken: user.stsTokenManager.accessToken,
+              ...user,
+              ...userSnap,
+            })
+          );
           ToastAndroid.showWithGravity(
             "Login Successfully",
             ToastAndroid.SHORT,

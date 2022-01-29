@@ -1,13 +1,147 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
+import { useDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
-
+import Constants from "expo-constants";
+import * as Google from "expo-google-app-auth";
+import {
+  onAuthStateChanged,
+  signInWithCredential,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
+import { auth, db } from "../firebase/config.js";
+import { signInSuccess } from "../redux/actions/auth";
 const LandingScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
+  const dispatch = useDispatch();
+  const isUserEqual = (googleUser, firebaseUser) => {
+    if (firebaseUser) {
+      const providerData = firebaseUser.providerData;
+      for (let i = 0; i < providerData.length; i++) {
+        if (
+          providerData[i].providerId === GoogleAuthProvider.PROVIDER_ID &&
+          providerData[i].uid === googleUser.user.id
+        ) {
+          // We don't need to reauth the Firebase connection.
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const onSignIn = (googleUser) => {
+    // We need to register an Observer on Firebase Auth to make sure auth is initialized.
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        const credential = GoogleAuthProvider.credential(googleUser.idToken);
+
+        // Sign in with credential from the Google user.
+        signInWithCredential(auth, credential)
+          .then((result) => {
+            const uid = result.user.uid;
+            if (result._tokenResponse.isNewUser) {
+              const data = {
+                id: uid,
+                email: result.user.email,
+                fullName: result.user.displayName,
+                profile_picture: result.user.photoURL,
+                created_at: Date.now(),
+              };
+              addDoc(collection(db, "users"), data)
+                .then(() => {
+                  dispatch(
+                    signInSuccess({
+                      accessToken: result.user.stsTokenManager.accessToken,
+                      ...data,
+                    })
+                  );
+                })
+                .catch((error) => {
+                  ToastAndroid.showWithGravity(
+                    error,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.BOTTOM
+                  );
+                });
+            } else {
+              const newFields = { last_logged_in: Date.now() };
+              getDocs(collection(db, "users")).then((querySnapshot) => {
+                querySnapshot.forEach((responseDoc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  if (responseDoc.data().id === uid) {
+                    const userDoc = doc(db, "users", responseDoc.id);
+                    updateDoc(userDoc, newFields).then(() => {
+                      dispatch(
+                        signInSuccess({
+                          accessToken: result.user.stsTokenManager.accessToken,
+                          id: uid,
+                          email: result.user.email,
+                          fullName: result.user.displayName,
+                          profile_picture: result.user.photoURL,
+                        })
+                      );
+                    });
+                  }
+                });
+              });
+            }
+          })
+          .catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            ToastAndroid.showWithGravity(
+              errorCode + " - " + errorMessage,
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+          });
+      } else {
+        ToastAndroid.showWithGravity(
+          "User already signed-in Firebase.",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      }
+    });
+  };
+  const googleLogin = async () => {
+    try {
+      const result = await Google.logInAsync({
+        //return an object with result token and user
+        androidClientId: Constants.manifest.extra.ANDROID_KEY, //From app.json
+        scopes: ["email", "profile"],
+      });
+      if (result.type === "success") {
+        onSignIn(result);
+      } else {
+        //CANCEL
+        console.log(result);
+      }
+    } catch ({ message }) {
+      alert("login: Error:" + message);
+    }
+  };
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
@@ -21,7 +155,7 @@ const LandingScreen = ({ navigation }) => {
           >
             <Text style={styles.buttonText}>Sign Up with Email</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonGoogle}>
+          <TouchableOpacity onPress={googleLogin} style={styles.buttonGoogle}>
             <Text style={styles.buttonText}>Sign In with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonFacebook}>
