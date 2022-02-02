@@ -29,7 +29,10 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "ANDROID_KEY": "793788753146-s1jksokeve9dvgmcp8gp0duc9aqncvqv.apps.googleusercontent.com"
+      "ANDROID_KEY": "793788753146-s1jksokeve9dvgmcp8gp0duc9aqncvqv.apps.googleusercontent.com",
+      "facebook": {
+        "appId": "332561522084753"
+      }
       }
   }
 }

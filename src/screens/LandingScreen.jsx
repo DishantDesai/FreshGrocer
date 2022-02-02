@@ -12,10 +12,13 @@ import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import Constants from "expo-constants";
 import * as Google from "expo-google-app-auth";
+import * as Facebook from "expo-facebook";
+
 import {
   onAuthStateChanged,
   signInWithCredential,
   GoogleAuthProvider,
+  FacebookAuthProvider,
 } from "firebase/auth";
 import {
   collection,
@@ -31,7 +34,7 @@ const LandingScreen = ({ navigation }) => {
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
   const dispatch = useDispatch();
-  const isUserEqual = (googleUser, firebaseUser) => {
+  const isGoogleLoginUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
       const providerData = firebaseUser.providerData;
       for (let i = 0; i < providerData.length; i++) {
@@ -51,7 +54,7 @@ const LandingScreen = ({ navigation }) => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       unsubscribe();
       // Check if we are already signed-in Firebase with the correct user.
-      if (!isUserEqual(googleUser, firebaseUser)) {
+      if (!isGoogleLoginUserEqual(googleUser, firebaseUser)) {
         // Build Firebase credential with the Google ID token.
         const credential = GoogleAuthProvider.credential(googleUser.idToken);
 
@@ -142,6 +145,126 @@ const LandingScreen = ({ navigation }) => {
       alert("login: Error:" + message);
     }
   };
+  const isFacebookLoginUserEqual = (googleUser, firebaseUser) => {
+    if (firebaseUser) {
+      const providerData = firebaseUser.providerData;
+      for (let i = 0; i < providerData.length; i++) {
+        if (
+          providerData[i].providerId === GoogleAuthProvider.PROVIDER_ID &&
+          providerData[i].uid === googleUser.user.id
+        ) {
+          // We don't need to reauth the Firebase connection.
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const onFacebookSignIn = (response) => {
+    if (response.authResponse) {
+      // User is signed-in Facebook.
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        unsubscribe();
+        // Check if we are already signed-in Firebase with the correct user.
+        if (!isFacebookLoginUserEqual(response.authResponse, firebaseUser)) {
+          // Build Firebase credential with the Facebook auth token.
+          const credential = FacebookAuthProvider.credential(
+            response.authResponse.accessToken
+          );
+
+          // Sign in with the credential from the Facebook user.
+          signInWithCredential(auth, credential)
+            .then((result) => {
+              const uid = result.user.uid;
+              if (result._tokenResponse.isNewUser) {
+                const data = {
+                  id: uid,
+                  email: result.user.email,
+                  fullName: result.user.displayName,
+                  profile_picture: result.user.photoURL,
+                  created_at: Date.now(),
+                };
+                addDoc(collection(db, "users"), data)
+                  .then(() => {
+                    dispatch(
+                      signInSuccess({
+                        accessToken: result.user.stsTokenManager.accessToken,
+                        ...data,
+                      })
+                    );
+                  })
+                  .catch((error) => {
+                    ToastAndroid.showWithGravity(
+                      error,
+                      ToastAndroid.SHORT,
+                      ToastAndroid.BOTTOM
+                    );
+                  });
+              } else {
+                const newFields = { last_logged_in: Date.now() };
+                getDocs(collection(db, "users")).then((querySnapshot) => {
+                  querySnapshot.forEach((responseDoc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    if (responseDoc.data().id === uid) {
+                      const userDoc = doc(db, "users", responseDoc.id);
+                      updateDoc(userDoc, newFields).then(() => {
+                        dispatch(
+                          signInSuccess({
+                            accessToken:
+                              result.user.stsTokenManager.accessToken,
+                            id: uid,
+                            email: result.user.email,
+                            fullName: result.user.displayName,
+                            profile_picture: result.user.photoURL,
+                          })
+                        );
+                      });
+                    }
+                  });
+                });
+              }
+            })
+            .catch((error) => {
+              // Handle Errors here.
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              ToastAndroid.showWithGravity(
+                errorCode + " - " + errorMessage,
+                ToastAndroid.SHORT,
+                ToastAndroid.BOTTOM
+              );
+            });
+        } else {
+          // User is already signed-in Firebase with the correct user.
+          ToastAndroid.showWithGravity(
+            "User already signed-in Firebase.",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+      });
+    }
+  };
+
+  const facebookLogin = async () => {
+    try {
+      console.log(Constants.manifest.extra.facebook.appId);
+      await Facebook.initializeAsync({
+        appId: Constants.manifest.extra.facebook.appId,
+      });
+      const result = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ["public_profile"],
+      });
+      if (result.type === "success") {
+        onFacebookSignIn(result);
+      } else {
+        //CANCELc
+        console.log(result);
+      }
+    } catch ({ message }) {
+      alert("login: Error:" + message);
+    }
+  };
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
@@ -158,7 +281,10 @@ const LandingScreen = ({ navigation }) => {
           <TouchableOpacity onPress={googleLogin} style={styles.buttonGoogle}>
             <Text style={styles.buttonText}>Sign In with Google</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonFacebook}>
+          <TouchableOpacity
+            onPress={facebookLogin}
+            style={styles.buttonFacebook}
+          >
             <Text style={styles.buttonText}>Sign In with Facebook</Text>
           </TouchableOpacity>
           <Text
