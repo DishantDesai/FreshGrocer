@@ -12,37 +12,22 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { getAuth, signOut } from "firebase/auth";
 import { THEME_COLOR } from "../utils/constants";
-import {
-  vegetablesAndFruits,
-  dairyAndEggs,
-  meatAndSeaFood,
-  pantryFood,
-  bakeryFood,
-  frozenFood,
-} from "../utils/data";
 import { signOutSuccess } from "../redux/actions/auth";
+import { AntDesign } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase/config";
+
 const Header = ({
   title,
   hideCart,
   hideBackArrow,
-  hidePlusIcon = true,
   addNavigate,
+  hidePlusIcon = true,
+  isAdmin = false,
 }) => {
-  const [cartItemCount, setCartItemCount] = useState(0);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const cartProducts = [
-      ...vegetablesAndFruits,
-      ...dairyAndEggs,
-      ...meatAndSeaFood,
-      ...pantryFood,
-      ...bakeryFood,
-      ...frozenFood,
-    ].filter((product) => product.isAddedToCart);
-    setCartItemCount(cartProducts.length);
-  }, []);
   const logout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -57,14 +42,15 @@ const Header = ({
         );
       });
   };
+
   return (
-    <View>
+    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
       {!hideBackArrow && (
         <TouchableOpacity
           onPress={() => {
             navigation.pop();
           }}
-          style={{ position: "absolute", top: 10, zIndex: 10 }}
+          // style={{ position: "absolute", top: 10, zIndex: 10 }}
         >
           <Feather name="arrow-left" size={20} style={{ fontSize: 34 }} />
         </TouchableOpacity>
@@ -80,24 +66,15 @@ const Header = ({
         </TouchableOpacity>
       )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>
-      <View style={styles.cartContainer}>
+      <View>
         {!hideCart && (
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => navigation.navigate("Cart")}
-          >
-            <View style={{ position: "relative" }}>
-              <Feather name="shopping-cart" size={28} color="black" />
-              {cartItemCount > 0 && (
-                <View style={styles.cartCount}>
-                  <Text style={{ fontSize: 10, color: "white" }}>
-                    {cartItemCount}
-                  </Text>
-                </View>
-              )}
-            </View>
+          <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            <Feather name="shopping-cart" size={28} color="black" />
           </TouchableOpacity>
         )}
+      </View>
+
+      <View>
         <TouchableOpacity onPress={logout}>
           <AntDesign name="poweroff" size={28} color="black" />
         </TouchableOpacity>

@@ -11,23 +11,40 @@ import {
 } from "react-native";
 import Header from "../../components/Header";
 import { RadioButton } from "react-native-paper";
-import { updateDoc, doc } from "firebase/firestore";
+import { updateDoc, doc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { useDispatch } from "react-redux";
+import { getAllProducts } from "../../redux/actions/products";
 
 const ProductEditScreen = ({ navigation, route }) => {
+  const dispatch = useDispatch();
   const { product } = route.params;
-  const [checked, setChecked] = useState("first");
   const [productPrice, setProductPrice] = useState(product?.price);
+
+  const productsCollection = collection(db, "products");
+
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection);
+
+    dispatch(
+      getAllProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+  };
 
   const updateProduct = async (id, price) => {
     const productDoc = doc(db, "products", id);
     const newFields = { price };
     await updateDoc(productDoc, newFields);
+
+    getProducts();
+
+    alert("Product successfully updated!");
+    navigation.navigate("AdminProductList");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideCart={true} />
+      <Header hideCart={true} addNavigate={true} hideBackArrow={true} />
       <View
         style={{
           backgroundColor: "orange",
@@ -46,7 +63,7 @@ const ProductEditScreen = ({ navigation, route }) => {
             marginRight: 15,
             alignSelf: "center",
           }}
-          source={{ uri: product.url }}
+          source={{ uri: product.image }}
         />
         <Text
           style={{
@@ -70,7 +87,6 @@ const ProductEditScreen = ({ navigation, route }) => {
         >
           Item Price
         </Text>
-
         <TextInput
           value={productPrice}
           onChangeText={(text) => setProductPrice(text)}
@@ -78,14 +94,10 @@ const ProductEditScreen = ({ navigation, route }) => {
           placeholder="edit price"
         />
       </View>
-
       <View style={{ flex: 1, justifyContent: "flex-end" }}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            updateProduct(product.id, productPrice);
-            navigation.navigate("AdminProductList");
-          }}
+          onPress={() => updateProduct(product.id, productPrice)}
         >
           <Text style={styles.buttonText}>Save and Exit</Text>
         </TouchableOpacity>

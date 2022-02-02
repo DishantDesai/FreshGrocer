@@ -11,10 +11,12 @@ import ProductList from "../screens/User/ProductListScreen";
 import Cart from "../screens/User/CartScreen";
 import ProductDetail from "../screens/User/ProductDetailScreen";
 import AdminProductList from "../screens/Admin/AdminProductListScreen";
+import AddProducts from "../screens/Admin/AddProducts";
 import ProductEditScreen from "../screens/Admin/ProductEditScreen";
 import Checkout from "../screens/User/CheckoutScreen";
 import Order from "../screens/User/OrderScreen";
 import AddProducts from "../screens/Admin/AddProducts";
+import ListOrders from "../screens/Admin/ListOrders";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +37,11 @@ export const AdminStack = () => {
         name="ProductEdit"
         options={{ headerShown: false }}
         component={ProductEditScreen}
+      />
+      <Stack.Screen
+        name="ListOrders"
+        options={{ headerShown: false }}
+        component={ListOrders}
       />
     </Stack.Navigator>
   );
