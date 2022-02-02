@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Constants from "expo-constants";
@@ -18,7 +19,7 @@ import Header from "../../components/Header";
 import { THEME_COLOR } from "../../utils/constants";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { RadioButton } from "react-native-paper";
+import { Checkbox, RadioButton } from "react-native-paper";
 import { getAllProducts } from "../../redux/actions/products";
 import { useDispatch } from "react-redux";
 
@@ -28,8 +29,32 @@ const AddProducts = ({ navigation, route }) => {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
+  const [productDiscountPrice, setProductDiscountPrice] = useState("");
   const [productImage, setProductImage] = useState("");
-  const [checked, setChecked] = useState("");
+  const [checked, setChecked] = useState(false);
+
+  const [sortOption, setSortOption] = useState(null);
+  const [sortSubOption, setSortSubOption] = useState(null);
+  const data = [
+    { label: "Vegetables and fruits", value: "vegetablesFruits" },
+    { label: "Dairy & Eggs", value: "dairyEggs" },
+    { label: "Meat & Sea food", value: "meatSeafood" },
+    { label: "Pantry & Groceries", value: "pantryGroceries" },
+    { label: "Bakery", value: "bakery" },
+    { label: "Frozen Food", value: "frozenFood" },
+  ];
+  const subData = [
+    { label: "Vegetables", value: "vegetables" },
+    { label: "Fruits", value: "fruits" },
+    { label: "Dairy", value: "dairy" },
+    { label: "Eggs", value: "eggs" },
+    { label: "Meat", value: "meat" },
+    { label: "Sea food", value: "seafood" },
+    { label: "Pantry", value: "pantry" },
+    { label: "Groceries", value: "groceries" },
+    { label: "Bakery", value: "bakeryy" },
+    { label: "Frozen Food", value: "frozenFood" },
+  ];
 
   const productsCollectionRef = collection(db, "products");
 
@@ -42,14 +67,34 @@ const AddProducts = ({ navigation, route }) => {
   };
 
   const createProduct = async () => {
+    if (
+      productName === "" ||
+      productImage === "" ||
+      productPrice === "" ||
+      productQuantity === "" ||
+      productDescription === "" ||
+      sortOption === "" ||
+      sortSubOption === "" ||
+      productDiscountPrice === ""
+    ) {
+      ToastAndroid.showWithGravity(
+        "Please fill all fields",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      return;
+    }
     try {
       const data = await addDoc(productsCollectionRef, {
         name: productName,
         image: productImage,
         price: productPrice,
+        discountPrice: productDiscountPrice,
         quantity: productQuantity,
         description: productDescription,
-        type: checked,
+        category: sortOption,
+        subCategory: sortSubOption,
+        offer: checked,
       });
       getProducts();
       alert("Product successfully added!");
@@ -59,10 +104,32 @@ const AddProducts = ({ navigation, route }) => {
     }
   };
 
+  const renderItem = (item) => {
+    return (
+      <View style={styles.item}>
+        <Text
+          style={[
+            item.value === sortOption
+              ? { color: "#ffffff" }
+              : { color: "#000" },
+            styles.textItem,
+          ]}
+        >
+          {item.label}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <Header hideCart={true} addNavigate={false} hideBackArrow={true} />
+        <Header
+          hideCart={true}
+          addNavigate={false}
+          hideBackArrow={true}
+          isAdmin={true}
+        />
 
         <View style={{ marginTop: 20 }}>
           <Text
@@ -96,6 +163,16 @@ const AddProducts = ({ navigation, route }) => {
             onChangeText={(text) => setProductPrice(text)}
             style={styles.input}
             placeholder="Add price"
+            keyboardType="numeric"
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            value={productDiscountPrice}
+            onChangeText={(text) => setProductDiscountPrice(text)}
+            style={styles.input}
+            placeholder="Discount price"
+            keyboardType="numeric"
           />
         </View>
 
@@ -105,6 +182,7 @@ const AddProducts = ({ navigation, route }) => {
             onChangeText={(text) => setProductQuantity(text)}
             style={styles.input}
             placeholder="Quantity"
+            keyboardType="numeric"
           />
         </View>
         <View style={{ marginTop: 10 }}>
@@ -115,41 +193,68 @@ const AddProducts = ({ navigation, route }) => {
             placeholder="Add product image"
           />
         </View>
-        <View style={{ marginTop: 10, flexDirection: "row" }}>
-          <View
-            style={{
-              justifyContent: "center",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <RadioButton
-              value="first"
-              label="Carto Base MAp"
-              status={checked === "vegetables" ? "checked" : "unchecked"}
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 20 }}>Enable offer</Text>
+            <Checkbox
+              status={checked ? "checked" : "unchecked"}
               onPress={() => {
-                setChecked("vegetables");
+                setChecked(!checked);
               }}
             />
-            <Text>Vegetables</Text>
           </View>
-          <View
-            style={{
-              justifyContent: "center",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <RadioButton
-              value="second"
-              status={checked === "fruits" ? "checked" : "unchecked"}
-              // onPress={() => { this.setState({ checked: 'second' }); }}
-              onPress={() => {
-                setChecked("fruits");
-              }}
-            />
-            <Text>Fruits</Text>
-          </View>
+        </View>
+        <View style={{ marginTop: 10, flexDirection: "column" }}>
+          <Text style={{ fontSize: 20 }}>Category</Text>
+          <Dropdown
+            style={styles.dropdown}
+            containerStyle={styles.containerListStyle}
+            placeholderStyle={styles.activeColor}
+            selectedTextStyle={styles.activeColor}
+            data={data}
+            onChange={(item) => setSortOption(item.value)}
+            value={sortOption}
+            maxHeight={180}
+            labelField="label"
+            valueField="value"
+            placeholder="Sorting"
+            activeColor={THEME_COLOR}
+            iconColor={THEME_COLOR}
+            renderLeftIcon={() => (
+              <MaterialCommunityIcons
+                style={styles.icon}
+                name="sort"
+                size={24}
+              />
+            )}
+            renderItem={renderItem}
+          />
+        </View>
+        <View style={{ marginTop: 10, flexDirection: "column" }}>
+          <Text style={{ fontSize: 20 }}>Sub Category</Text>
+          <Dropdown
+            style={styles.dropdown}
+            containerStyle={styles.containerListStyle}
+            placeholderStyle={styles.activeColor}
+            selectedTextStyle={styles.activeColor}
+            data={subData}
+            onChange={(item) => setSortSubOption(item.value)}
+            value={sortSubOption}
+            maxHeight={180}
+            labelField="label"
+            valueField="value"
+            placeholder="Sorting"
+            activeColor={THEME_COLOR}
+            iconColor={THEME_COLOR}
+            renderLeftIcon={() => (
+              <MaterialCommunityIcons
+                style={styles.icon}
+                name="sort"
+                size={24}
+              />
+            )}
+            renderItem={renderItem}
+          />
         </View>
 
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
@@ -187,6 +292,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     alignSelf: "center",
+  },
+  sortingContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   container: {
     flex: 1,
@@ -299,7 +409,7 @@ const styles = StyleSheet.create({
     color: "#9D9998",
   },
   dropdown: {
-    margin: 16,
+    // margin: 16,
     height: 50,
     minWidth: 190,
     maxWidth: 190,
