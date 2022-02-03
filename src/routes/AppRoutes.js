@@ -15,7 +15,6 @@ import AddProducts from "../screens/Admin/AddProducts";
 import ProductEditScreen from "../screens/Admin/ProductEditScreen";
 import Checkout from "../screens/User/CheckoutScreen";
 import Order from "../screens/User/OrderScreen";
-import AddProducts from "../screens/Admin/AddProducts";
 import ListOrders from "../screens/Admin/ListOrders";
 
 const Stack = createNativeStackNavigator();

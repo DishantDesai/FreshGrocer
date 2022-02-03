@@ -49,7 +49,7 @@ const LandingScreen = ({ navigation }) => {
     }
     return false;
   };
-  const onSignIn = (googleUser) => {
+  const onGoogleSignIn = (googleUser) => {
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       unsubscribe();
@@ -136,7 +136,7 @@ const LandingScreen = ({ navigation }) => {
         scopes: ["email", "profile"],
       });
       if (result.type === "success") {
-        onSignIn(result);
+        onGoogleSignIn(result);
       } else {
         //CANCEL
         console.log(result);
@@ -145,13 +145,13 @@ const LandingScreen = ({ navigation }) => {
       alert("login: Error:" + message);
     }
   };
-  const isFacebookLoginUserEqual = (googleUser, firebaseUser) => {
+  const isFacebookLoginUserEqual = (facebookUser, firebaseUser) => {
     if (firebaseUser) {
       const providerData = firebaseUser.providerData;
       for (let i = 0; i < providerData.length; i++) {
         if (
           providerData[i].providerId === GoogleAuthProvider.PROVIDER_ID &&
-          providerData[i].uid === googleUser.user.id
+          providerData[i].uid === facebookUser.userId
         ) {
           // We don't need to reauth the Firebase connection.
           return true;
@@ -161,94 +161,87 @@ const LandingScreen = ({ navigation }) => {
     return false;
   };
   const onFacebookSignIn = (response) => {
-    if (response.authResponse) {
-      // User is signed-in Facebook.
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        unsubscribe();
-        // Check if we are already signed-in Firebase with the correct user.
-        if (!isFacebookLoginUserEqual(response.authResponse, firebaseUser)) {
-          // Build Firebase credential with the Facebook auth token.
-          const credential = FacebookAuthProvider.credential(
-            response.authResponse.accessToken
-          );
+    // User is signed-in Facebook.
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!isFacebookLoginUserEqual(response, firebaseUser)) {
+        // Build Firebase credential with the Facebook auth token.
+        const credential = FacebookAuthProvider.credential(response.token);
 
-          // Sign in with the credential from the Facebook user.
-          signInWithCredential(auth, credential)
-            .then((result) => {
-              const uid = result.user.uid;
-              if (result._tokenResponse.isNewUser) {
-                const data = {
-                  id: uid,
-                  email: result.user.email,
-                  fullName: result.user.displayName,
-                  profile_picture: result.user.photoURL,
-                  created_at: Date.now(),
-                };
-                addDoc(collection(db, "users"), data)
-                  .then(() => {
-                    dispatch(
-                      signInSuccess({
-                        accessToken: result.user.stsTokenManager.accessToken,
-                        ...data,
-                      })
-                    );
-                  })
-                  .catch((error) => {
-                    ToastAndroid.showWithGravity(
-                      error,
-                      ToastAndroid.SHORT,
-                      ToastAndroid.BOTTOM
-                    );
-                  });
-              } else {
-                const newFields = { last_logged_in: Date.now() };
-                getDocs(collection(db, "users")).then((querySnapshot) => {
-                  querySnapshot.forEach((responseDoc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    if (responseDoc.data().id === uid) {
-                      const userDoc = doc(db, "users", responseDoc.id);
-                      updateDoc(userDoc, newFields).then(() => {
-                        dispatch(
-                          signInSuccess({
-                            accessToken:
-                              result.user.stsTokenManager.accessToken,
-                            id: uid,
-                            email: result.user.email,
-                            fullName: result.user.displayName,
-                            profile_picture: result.user.photoURL,
-                          })
-                        );
-                      });
-                    }
-                  });
+        // Sign in with the credential from the Facebook user.
+        signInWithCredential(auth, credential)
+          .then((result) => {
+            const uid = result.user.uid;
+            if (result._tokenResponse.isNewUser) {
+              const data = {
+                id: uid,
+                email: result.user.email,
+                fullName: result.user.displayName,
+                profile_picture: result.user.photoURL,
+                created_at: Date.now(),
+              };
+              addDoc(collection(db, "users"), data)
+                .then(() => {
+                  dispatch(
+                    signInSuccess({
+                      accessToken: result.user.stsTokenManager.accessToken,
+                      ...data,
+                    })
+                  );
+                })
+                .catch((error) => {
+                  ToastAndroid.showWithGravity(
+                    error,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.BOTTOM
+                  );
                 });
-              }
-            })
-            .catch((error) => {
-              // Handle Errors here.
-              const errorCode = error.code;
-              const errorMessage = error.message;
-              ToastAndroid.showWithGravity(
-                errorCode + " - " + errorMessage,
-                ToastAndroid.SHORT,
-                ToastAndroid.BOTTOM
-              );
-            });
-        } else {
-          // User is already signed-in Firebase with the correct user.
-          ToastAndroid.showWithGravity(
-            "User already signed-in Firebase.",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
-        }
-      });
-    }
+            } else {
+              const newFields = { last_logged_in: Date.now() };
+              getDocs(collection(db, "users")).then((querySnapshot) => {
+                querySnapshot.forEach((responseDoc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  if (responseDoc.data().id === uid) {
+                    const userDoc = doc(db, "users", responseDoc.id);
+                    updateDoc(userDoc, newFields).then(() => {
+                      dispatch(
+                        signInSuccess({
+                          accessToken: result.user.stsTokenManager.accessToken,
+                          id: uid,
+                          email: result.user.email,
+                          fullName: result.user.displayName,
+                          profile_picture: result.user.photoURL,
+                        })
+                      );
+                    });
+                  }
+                });
+              });
+            }
+          })
+          .catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            ToastAndroid.showWithGravity(
+              errorCode + " - " + errorMessage,
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+          });
+      } else {
+        // User is already signed-in Firebase with the correct user.
+        ToastAndroid.showWithGravity(
+          "User already signed-in Firebase.",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      }
+    });
   };
-
   const facebookLogin = async () => {
     try {
-      console.log(Constants.manifest.extra.facebook.appId);
       await Facebook.initializeAsync({
         appId: Constants.manifest.extra.facebook.appId,
       });

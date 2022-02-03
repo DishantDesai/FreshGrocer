@@ -6,7 +6,6 @@ import {
 } from "../../utils/ActionTypes";
 
 export const signInSuccess = (authUser) => {
-  console.log("authUser", authUser);
   return {
     type: SIGNIN_SUCCESS,
     payload: authUser,

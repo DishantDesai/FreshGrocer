@@ -1,5 +1,13 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ToastAndroid,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
@@ -10,12 +18,14 @@ import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 import { signUPValidationSchema } from "../ValidationSchemas/SignUp";
 import { LogBox } from "react-native";
-
+import { signInSuccess, hideAuthLoader } from "../redux/actions/auth";
 LogBox.ignoreLogs(["Setting a timer"]);
 const SignupScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     "Lobster-Regular": require("../../assets/fonts/Lobster-Regular.ttf"),
   });
+  const [loader, setLoader] = useState(false);
+  const dispatch = useDispatch();
   const onRegisterPress = ({
     email,
     fullName,
@@ -23,9 +33,11 @@ const SignupScreen = ({ navigation }) => {
     address,
     phoneNumber,
   }) => {
+    setLoader(true);
     createUserWithEmailAndPassword(auth, email, password)
       .then((response) => {
         const uid = response.user.uid;
+        const user = response.user;
         const data = {
           id: uid,
           email,
@@ -36,14 +48,34 @@ const SignupScreen = ({ navigation }) => {
         };
         addDoc(collection(db, "users"), data)
           .then(() => {
-            navigation.navigate("Home");
+            dispatch(
+              signInSuccess({
+                accessToken: user.stsTokenManager.accessToken,
+                ...user,
+              })
+            );
+            ToastAndroid.showWithGravity(
+              "User Registered Successfully",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
           })
           .catch((error) => {
-            console.log("error", error);
+            ToastAndroid.showWithGravity(
+              error.message,
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+            setLoader(false);
           });
       })
       .catch((error) => {
-        alert("signup" + error);
+        ToastAndroid.showWithGravity(
+          error.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+        setLoader(false);
       });
   };
   if (!fontsLoaded) {
@@ -102,7 +134,11 @@ const SignupScreen = ({ navigation }) => {
                   placeholder="Confirm Password"
                 />
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                  <Text style={styles.buttonText}>Sign Up</Text>
+                  {loader ? (
+                    <ActivityIndicator size={30} color="white" />
+                  ) : (
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                  )}
                 </TouchableOpacity>
               </View>
             )}

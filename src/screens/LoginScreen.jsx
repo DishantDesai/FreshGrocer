@@ -33,24 +33,33 @@ const Home = ({ navigation }) => {
     signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         const user = userCredential.user;
-        const docRef = doc(db, "users", "1tYQUhtMB9FDdake2t7D");
-        const docSnap = await getDoc(docRef);
-        //Redirect based on fetched user if it is Admin or normal user
-        if (docSnap.exists()) {
-          const userSnap = docSnap.data();
+        if (email.toLowerCase() === "admin@freshgrocer.com") {
+          const docRef = doc(db, "users", "1tYQUhtMB9FDdake2t7D");
+          const docSnap = await getDoc(docRef);
+          //Redirect based on fetched user if it is Admin or normal user
+          if (docSnap.exists()) {
+            const userSnap = docSnap.data();
+            dispatch(
+              signInSuccess({
+                accessToken: user.stsTokenManager.accessToken,
+                ...user,
+                ...userSnap,
+              })
+            );
+          }
+        } else {
           dispatch(
             signInSuccess({
               accessToken: user.stsTokenManager.accessToken,
               ...user,
-              ...userSnap,
             })
           );
-          ToastAndroid.showWithGravity(
-            "Login Successfully",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
         }
+        ToastAndroid.showWithGravity(
+          "Login Successfully",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
       })
       .catch((error) => {
         dispatch(hideAuthLoader());

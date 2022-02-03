@@ -13,9 +13,7 @@ import { Feather, AntDesign } from "@expo/vector-icons";
 import { getAuth, signOut } from "firebase/auth";
 import { THEME_COLOR } from "../utils/constants";
 import { signOutSuccess } from "../redux/actions/auth";
-import { AntDesign } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { signOut } from "firebase/auth";
 import { auth } from "../firebase/config";
 
 const Header = ({
