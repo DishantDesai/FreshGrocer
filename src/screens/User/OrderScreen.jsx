@@ -9,8 +9,10 @@ import { DELIVERY_TIME, THEME_COLOR } from "../../utils/constants";
 import Header from "../../components/Header";
 import { db } from "../../firebase/config";
 import { doc, updateDoc } from "firebase/firestore";
+import { useDispatch } from "react-redux";
 
 const OrderScreen = ({ route }) => {
+  const dispatch = useDispatch();
   const { orderId } = route.params;
   const navigation = useNavigation();
 
@@ -20,13 +22,15 @@ const OrderScreen = ({ route }) => {
 
     try {
       const data = await updateDoc(orderDoc, newFields);
+
+      // dispatch(clearCart());
     } catch (error) {}
 
     navigation.navigate("Home");
   };
 
   const { seconds, minutes, restart } = useTimer({
-    expiryTimestamp: new Date().setSeconds(DELIVERY_TIME),
+    expiryTimestamp: new Date().setSeconds(10),
     onExpire: () =>
       Alert.alert("Order delivered successfully", null, [
         {
@@ -36,7 +40,7 @@ const OrderScreen = ({ route }) => {
       ]),
   });
   useEffect(() => {
-    restart(new Date().setSeconds(new Date().getSeconds() + 1799));
+    restart(new Date().setSeconds(50));
   }, []);
   return (
     <SafeAreaView style={styles.container}>

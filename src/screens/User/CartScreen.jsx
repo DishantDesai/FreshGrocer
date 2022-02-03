@@ -25,12 +25,19 @@ import {
   frozenFood,
 } from "../../utils/data";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart } from "../../redux/actions/cart";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeFromCart,
+} from "../../redux/actions/cart";
+
+import { TAX_CHARGE, DELIVERY_CHARGE } from "../../utils/constants";
 
 const CartScreen = () => {
   const dispatch = useDispatch();
   const [cartProductList, setCartProduct] = useState([]);
   const [cartTotal, setCartTotal] = useState("");
+  const [cartSubtotal, setCartSubtotal] = useState("");
   const navigation = useNavigation();
   const { items } = useSelector((state) => state.cart.itemsSelected);
 
@@ -48,21 +55,47 @@ const CartScreen = () => {
   const calculateCartTotal = () => {
     let total = 0;
     items.forEach((c) => {
-      total += c.price;
+      const productPrice = parseFloat(c.price) * c.quantity;
+      total += parseFloat(productPrice);
     });
     return total;
   };
   const CartItem = ({ cartProduct }) => {
+    const dispatch = useDispatch();
+    const [count, setCount] = useState(0);
+
+    const { itemsSelected } = useSelector((state) => state.cart);
+
+    useEffect(() => {
+      const filterData = itemsSelected.items.filter(
+        (item) => item.id === cartProduct.id
+      );
+
+      if (filterData.length > 0) {
+        setCount(filterData[0].count);
+      }
+    }, [itemsSelected]);
+
+    const increaseQty = (item) => {
+      dispatch(increaseQuantity(item.id));
+    };
+    const decreaseQty = (item) => {
+      dispatch(decreaseQuantity(item.id));
+      if (count - 1 < 1) {
+        dispatch(removeFromCart(item));
+      }
+    };
+
     return (
       <View style={styles.cartItemContainer}>
         <View style={{ alignItems: "center", marginRight: 30 }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => decreaseQty(cartProduct)}>
             <View style={styles.countCircle}>
               <Text style={styles.incrementDecrementIcon}>-</Text>
             </View>
           </TouchableOpacity>
-          <Text style={{ color: "#9D9998", fontWeight: "bold" }}>01</Text>
-          <TouchableOpacity>
+          <Text style={{ color: "#9D9998", fontWeight: "bold" }}>{count}</Text>
+          <TouchableOpacity onPress={() => increaseQty(cartProduct)}>
             <View style={styles.countCircle}>
               <Text style={styles.incrementDecrementIcon}>+</Text>
             </View>
@@ -114,7 +147,10 @@ const CartScreen = () => {
                   <Text style={{ color: "white" }}>Apply</Text>
                 </TouchableOpacity>
               </View>
-              <OrderSummary cartTotal={calculateCartTotal()} />
+              <OrderSummary
+                cartTotal={calculateCartTotal()}
+                setCartSubtotal={setCartSubtotal}
+              />
               <TouchableOpacity
                 onPress={() => {
                   if (items.length > 0) {
