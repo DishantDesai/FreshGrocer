@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 import Header from "../../components/Header";
@@ -6,18 +6,57 @@ import { AntDesign } from "@expo/vector-icons";
 import { Rating } from "react-native-ratings";
 import { THEME_COLOR } from "../../utils/constants";
 
+
+
+import {
+  addToFavorite,
+  removeFromFavorite,
+} from "../../redux/actions/favorite";
+import { useDispatch, useSelector } from "react-redux";
+
+
 const ProductDetailScreen = ({ route }) => {
+  const dispatch = useDispatch()
   const { product } = route.params;
   const [count, setCount] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
+  
+  
+ const favoriteItems = useSelector((state) => state.favorite.itemsSelected);
+
+  
+  useEffect(() => {
+    const filterData = favoriteItems.items.filter(
+      (item) => item.id === product.id
+    );
+
+    if (filterData.length > 0) {
+      setIsFavorite(true);
+    } else {
+      setIsFavorite(false);
+    }
+  }, [favoriteItems]);
+
+  const addFavorite = (item) => {
+    dispatch(addToFavorite(item));
+  };
+  const removeFavorite = (item) => {
+    dispatch(removeFromFavorite(item));
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
       <Header />
       <View style={styles.ratingContainer}>
-        {product.isFavorite ? (
-          <AntDesign name="heart" size={24} color="red" />
+      {isFavorite ? (
+          <TouchableOpacity onPress={() => removeFavorite(product)}>
+            <AntDesign name="heart" size={24} color="red" />
+          </TouchableOpacity>
         ) : (
-          <AntDesign name="hearto" size={24} color="black" />
+          <TouchableOpacity onPress={() => addFavorite(product)}>
+            <AntDesign name="hearto" size={24} color="black" />
+          </TouchableOpacity>
         )}
       </View>
       <Image
