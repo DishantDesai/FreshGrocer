@@ -34,6 +34,8 @@ const AdminProductList = ({ navigation, route }) => {
   const productsCollection = collection(db, "products");
 
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filterData, setfilterData] = useState([]);
 
   const { items } = useSelector((state) => state.products);
 
@@ -79,7 +81,6 @@ const AdminProductList = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header
-        isAdmin={true}
         hideCart={true}
         addNavigate={true}
         hideBackArrow={true}
@@ -89,6 +90,8 @@ const AdminProductList = ({ navigation, route }) => {
         style={styles.input}
         placeholder="Search items..."
         autoCapitalize="none"
+        value={search}
+        onChangeText={(text) => setSearch(text)}
       />
 
       <View
@@ -103,43 +106,17 @@ const AdminProductList = ({ navigation, route }) => {
             <Text style={{ fontSize: 20 }}>Orders</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.sortingContainer}>
-          <Dropdown
-            style={styles.dropdown}
-            containerStyle={styles.containerListStyle}
-            placeholderStyle={styles.activeColor}
-            selectedTextStyle={styles.activeColor}
-            data={data}
-            onChange={(item) => setSortOption(item.value)}
-            value={sortOption}
-            maxHeight={180}
-            labelField="label"
-            valueField="value"
-            placeholder="Sorting"
-            activeColor={THEME_COLOR}
-            iconColor={THEME_COLOR}
-            renderLeftIcon={() => (
-              <MaterialCommunityIcons
-                style={styles.icon}
-                name="sort"
-                size={24}
-              />
-            )}
-            renderItem={renderItem}
-          />
-          {sortOption ? (
-            <TouchableOpacity onPress={() => setSortOption(null)}>
-              <AntDesign name="closecircleo" size={18} color={THEME_COLOR} />
-            </TouchableOpacity>
-          ) : (
-            <Text></Text>
-          )}
-        </View>
       </View>
 
       <FlatList
         key={"_"}
-        data={items}
+        data={items.filter((val) => {
+          if (search === "") {
+            return val;
+          } else if (val.name.toLowerCase().includes(search.toLowerCase())) {
+            return val;
+          }
+        })}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={styles.categoryContainer}
