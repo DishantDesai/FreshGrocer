@@ -17,14 +17,13 @@ const ProfileScreen = () => {
       try {
         const data = await getDocs(userDocRef);
 
-        const temp = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-
+        const temp = data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.data().id,
+        }));
         const filteredData = temp.filter((user) => {
-          return (
-            user.email.toLowerCase() === userData?.user?.email.toLowerCase()
-          );
+          return user.id === userData?.user?.id;
         });
-
         if (filteredData && filteredData.length > 0) {
           setUserInfo(filteredData[0]);
         }
@@ -57,19 +56,19 @@ const ProfileScreen = () => {
               Email
             </Text>
             <Title style={{ fontSize: 18 }}>
-              {userInfo && userData?.user?.email}
+              {userData?.user?.email ? userData?.user?.email : "NA"}
             </Title>
             <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 15 }}>
               Phone
             </Text>
             <Title style={{ fontSize: 18, marginTop: 15 }}>
-              {userInfo && userInfo?.phoneNumber}
+              {userInfo?.phoneNumber ? userInfo?.phoneNumber : "NA"}
             </Title>
             <Text style={{ fontSize: 20, marginTop: 15, fontWeight: "bold" }}>
               Address
             </Text>
             <Title style={{ fontSize: 18, marginTop: 15 }}>
-              {userInfo && userInfo?.address}
+              {userInfo?.address ? userInfo?.address : "NA"}
             </Title>
           </View>
         </View>
