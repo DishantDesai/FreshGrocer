@@ -217,7 +217,7 @@ const AddProducts = ({ navigation, route }) => {
             maxHeight={180}
             labelField="label"
             valueField="value"
-            placeholder="Sorting"
+            placeholder="Select Category"
             activeColor={THEME_COLOR}
             iconColor={THEME_COLOR}
             renderLeftIcon={() => (
@@ -243,7 +243,7 @@ const AddProducts = ({ navigation, route }) => {
             maxHeight={180}
             labelField="label"
             valueField="value"
-            placeholder="Sorting"
+            placeholder="Select Sub-Category"
             activeColor={THEME_COLOR}
             iconColor={THEME_COLOR}
             renderLeftIcon={() => (
