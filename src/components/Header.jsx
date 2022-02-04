@@ -24,6 +24,8 @@ const Header = ({
   hidePlusIcon = true,
   isAdmin = false,
 }) => {
+  const { items } = useSelector((state) => state.cart.itemsSelected);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const logout = () => {
@@ -68,10 +70,21 @@ const Header = ({
         {!hideCart && (
           <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
             <Feather name="shopping-cart" size={28} color="black" />
+
+            <View style={styles.cartCount}>
+              <Text style={{ fontSize: 10, color: "white" }}>
+                {items.length > 0 ? items.length : 0}
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
       </View>
 
+      <View>
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
+          <AntDesign name="user" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <View>
         <TouchableOpacity onPress={logout}>
           <AntDesign name="poweroff" size={28} color="black" />

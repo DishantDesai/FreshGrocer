@@ -22,79 +22,143 @@ import Header from "../../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign, Feather } from "@expo/vector-icons";
-
+import { getAllProducts } from "../../redux/actions/products";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
 import { THEME_COLOR } from "../../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
 const data = [
-  { label: "Price low to high", value: "priceDesc" },
-  { label: "Price high to low", value: "priceAsc" },
-  { label: "Top rated", value: "topRated" },
+  { label: "Price low to high", value: "lth" },
+  { label: "Price high to low", value: "htl" },
+  { label: "Relevance", value: "relevance" },
 ];
 const ProductListScreen = ({ route }) => {
-  const { category, activeFilter } = route.params;
+  const dispatch = useDispatch();
+  const [filterFoodProduct, setFilterFoodProduct] = useState("all");
+
+  const [sorting, setSorting] = useState("relevance");
+  console.log("sorting", sorting);
+
+  const productsCollection = collection(db, "products");
+
+  const { category, categoryListData } = route.params;
   const [productList, setProductList] = useState([]);
   const [sortOption, setSortOption] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const { items } = useSelector((state) => state.products);
+
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection);
+
+    dispatch(
+      getAllProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+  };
+
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      if (activeFilter === "weekly") {
-        if (category.type === "fruitsAndVegetables") {
-          setProductList(vegetablesAndFruits.filter((p) => p.hasOffer));
-        } else if (category.type === "dairy") {
-          setProductList(dairyAndEggs.filter((p) => p.hasOffer));
-        } else if (category.type === "meat") {
-          setProductList(meatAndSeaFood.filter((p) => p.hasOffer));
-        } else if (category.type === "bakery") {
-          setProductList(bakeryFood.filter((p) => p.hasOffer));
-        } else if (category.type === "pantry") {
-          setProductList(pantryFood.filter((p) => p.hasOffer));
-        } else if (category.type === "frozen") {
-          setProductList(frozenFood.filter((p) => p.hasOffer));
-        }
-      } else {
-        if (category.type === "fruitsAndVegetables") {
-          setProductList(vegetablesAndFruits);
-        } else if (category.type === "dairy") {
-          setProductList(dairyAndEggs);
-        } else if (category.type === "meat") {
-          setProductList(meatAndSeaFood);
-        } else if (category.type === "bakery") {
-          setProductList(bakeryFood);
-        } else if (category.type === "pantry") {
-          setProductList(pantryFood);
-        } else if (category.type === "frozen") {
-          setProductList(frozenFood);
-        }
-      }
-      setLoading(false);
-    }, 1000);
+    getProducts();
   }, []);
-  const tempProductList = [...productList];
-  const sortedProducts = useMemo(() => {
-    if (sortOption) {
-      return tempProductList.sort((firstEle, secondEle) => {
-        if (sortOption === "priceAsc") {
-          if (firstEle.price < secondEle.price) {
-            return 1;
+
+  const eitherSort = (arr = []) => {
+    const sorter = (a, b) => {
+      return +a.price - +b.price;
+    };
+    return arr.sort(sorter);
+  };
+
+  const htlSort = (arr = []) => {
+    const sorter = (a, b) => {
+      return +b.price - +a.price;
+    };
+    return arr.sort(sorter);
+  };
+
+  useEffect(() => {
+    let filterData = [];
+    if (items.length > 0) {
+      filterData = items.filter((item) => {
+        if (item.category === category.type) {
+          if (filterFoodProduct === "all") {
+            return true;
+          } else if (filterFoodProduct === item.subCategory) {
+            return true;
           }
-          if (firstEle.price > secondEle.price) {
-            return -1;
-          }
-          return 0;
-        } else if (sortOption === "priceDesc") {
-          if (firstEle.price < secondEle.price) {
-            return -1;
-          }
-          if (firstEle.price > secondEle.price) {
-            return 1;
-          }
-          return 0;
         }
       });
-    } else {
-      return productList;
+
+      if (sorting === "lth") {
+        filterData = eitherSort(filterData);
+      }
+      if (sorting === "htl") {
+        filterData = htlSort(filterData);
+      }
+
+      setProductList(filterData);
     }
-  }, [sortOption, productList]);
+  }, [items, filterFoodProduct, sorting]);
+
+  useEffect(() => {
+    // setLoading(true);
+    // setTimeout(() => {
+    //   if (activeFilter === "weekly") {
+    //     if (category.type === "vegetablesFruits") {
+    //       setProductList(vegetablesAndFruits.filter((p) => p.hasOffer));
+    //     } else if (category.type === "dairy") {
+    //       setProductList(dairyAndEggs.filter((p) => p.hasOffer));
+    //     } else if (category.type === "meat") {
+    //       setProductList(meatAndSeaFood.filter((p) => p.hasOffer));
+    //     } else if (category.type === "bakery") {
+    //       setProductList(bakeryFood.filter((p) => p.hasOffer));
+    //     } else if (category.type === "pantry") {
+    //       setProductList(pantryFood.filter((p) => p.hasOffer));
+    //     } else if (category.type === "frozen") {
+    //       setProductList(frozenFood.filter((p) => p.hasOffer));
+    //     }
+    //   } else {
+    //     if (category.type === "vegetablesFruits") {
+    //       setProductList(vegetablesAndFruits);
+    //     } else if (category.type === "dairy") {
+    //       setProductList(dairyAndEggs);
+    //     } else if (category.type === "meat") {
+    //       setProductList(meatAndSeaFood);
+    //     } else if (category.type === "bakery") {
+    //       setProductList(bakeryFood);
+    //     } else if (category.type === "pantry") {
+    //       setProductList(pantryFood);
+    //     } else if (category.type === "frozen") {
+    //       setProductList(frozenFood);
+    //     }
+    //   }
+    //   setLoading(false);
+    // }, 1000);
+  }, []);
+  // const tempProductList = [...productList];
+  // const sortedProducts = useMemo(() => {
+  //   if (sortOption) {
+  //     return tempProductList.sort((firstEle, secondEle) => {
+  //       if (sortOption === "priceAsc") {
+  //         if (firstEle.price < secondEle.price) {
+  //           return 1;
+  //         }
+  //         if (firstEle.price > secondEle.price) {
+  //           return -1;
+  //         }
+  //         return 0;
+  //       } else if (sortOption === "priceDesc") {
+  //         if (firstEle.price < secondEle.price) {
+  //           return -1;
+  //         }
+  //         if (firstEle.price > secondEle.price) {
+  //           return 1;
+  //         }
+  //         return 0;
+  //       }
+  //     });
+  //   } else {
+  //     return productList;
+  //   }
+  // }, [sortOption, productList]);
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
@@ -113,91 +177,59 @@ const ProductListScreen = ({ route }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header hidePlusIcon={true} />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
         autoCapitalize="none"
       />
+      <View style={styles.categoryFilterContainer}>
+        {categoryListData.map((list, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setFilterFoodProduct(list)}
+              style={[
+                styles.filterBtn,
+                filterFoodProduct === list
+                  ? styles.activeFilterBg
+                  : styles.inactiveFilterBg,
+              ]}
+            >
+              <Text
+                style={[
+                  filterFoodProduct === list
+                    ? styles.activeFilterTextColor
+                    : styles.inactiveFilterTextColor,
+                  styles.filterTypeText,
+                ]}
+              >
+                {list}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
       {productList.length ? (
         <View style={{ paddingBottom: 100 }}>
           <FlatList
             key={"_"}
-            data={sortedProducts}
+            data={productList}
             horizontal={false}
             numColumns={2}
             columnWrapperStyle={styles.categoryContainer}
             renderItem={({ item }) => {
-              return <ProductItem product={item} />;
+              return (
+                <ProductItem
+                  product={item}
+                  categoryListData={categoryListData}
+                />
+              );
             }}
             keyExtractor={(item) => item.id}
             ListHeaderComponent={() => {
               return (
                 <View>
-                  {category.type === "fruitsAndVegetables" && (
-                    <View style={styles.categoryFilterContainer}>
-                      <TouchableOpacity
-                        style={[styles.filterBtn, styles.activeFilterBg]}
-                      >
-                        <Text
-                          style={[
-                            styles.activeFilterTextColor,
-                            styles.filterTypeText,
-                          ]}
-                        >
-                          Vegetables
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.filterBtn, styles.inactiveFilterBg]}
-                      >
-                        <Text
-                          style={[
-                            styles.inactiveFilterTextColor,
-                            styles.filterTypeText,
-                          ]}
-                        >
-                          Fruits
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.filterBtn, styles.inactiveFilterBg]}
-                      >
-                        <Text
-                          style={[
-                            styles.inactiveFilterTextColor,
-                            styles.filterTypeText,
-                          ]}
-                        >
-                          Herbs
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.filterBtn, styles.activeFilterBg]}
-                      >
-                        <Text
-                          style={[
-                            styles.activeFilterTextColor,
-                            styles.filterTypeText,
-                          ]}
-                        >
-                          Salade kits
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.filterBtn, styles.activeFilterBg]}
-                      >
-                        <Text
-                          style={[
-                            styles.activeFilterTextColor,
-                            styles.filterTypeText,
-                          ]}
-                        >
-                          Vegetables
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
                   <View style={styles.sortingContainer}>
                     <Dropdown
                       style={styles.dropdown}
@@ -205,7 +237,7 @@ const ProductListScreen = ({ route }) => {
                       placeholderStyle={styles.activeColor}
                       selectedTextStyle={styles.activeColor}
                       data={data}
-                      onChange={(item) => setSortOption(item.value)}
+                      onChange={(item) => setSorting(item.value)}
                       value={sortOption}
                       maxHeight={180}
                       labelField="label"

@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -9,9 +10,12 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
+import { db } from "../../firebase/config";
+import { getAllProducts } from "../../redux/actions/products";
 
 import {
   vegetablesAndFruits,
@@ -22,43 +26,78 @@ import {
   frozenFood,
 } from "../../utils/data";
 const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const productsCollection = collection(db, "products");
   const [activeFilter, setActiveFilter] = useState("weekly");
+  const [productList, setProductList] = useState([]);
+
+  const { items } = useSelector((state) => state.products);
+
+  const favoriteItems = useSelector((state) => state.favorite.itemsSelected);
+
+  const getProducts = async () => {
+    const data = await getDocs(productsCollection);
+
+    dispatch(
+      getAllProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      // const filterData = items.filter((item) => {
+      //   return item.category === category.type;
+      // });
+      setProductList(items);
+    }
+  }, [items]);
+
   const categoryList = [
     {
       id: 1,
       title: "Fruits & Vegetables",
       thumb: require("../../../assets/images/fruits-and-vegetables.jpeg"),
-      type: "fruitsAndVegetables",
+      type: "vegetablesFruits",
+      list: ["all", "fruits", "vegetables"],
     },
     {
       id: 2,
       title: "Dairy & Eggs",
       thumb: require("../../../assets/images/Dairy-and-eggs.jpeg"),
-      type: "dairy",
+      type: "dairyEggs",
+      list: ["all", "dairy", "eggs"],
     },
     {
       id: 3,
       title: "Meet & Sea Food",
       thumb: require("../../../assets/images/meat-and-sea-food.jpeg"),
-      type: "meat",
+      type: "meatSeafood",
+      list: ["all", "seafood", "meat"],
     },
     {
       id: 4,
       title: "Pantry & Groceries",
       thumb: require("../../../assets/images/pantry.jpeg"),
-      type: "pantry",
+      type: "pantryGroceries",
+      list: ["all", "pantry", "groceries"],
     },
     {
       id: 5,
       title: "Bakery",
       thumb: require("../../../assets/images/bakery.jpeg"),
       type: "bakery",
+      list: ["all", "bakeryy"],
     },
     {
       id: 6,
       title: "Frozen Food",
       thumb: require("../../../assets/images/frozen-food.jpeg"),
-      type: "frozen",
+      type: "frozenFood",
+      list: ["all", "frozenFood"],
     },
   ];
   const filterList = [
@@ -81,22 +120,10 @@ const Home = ({ navigation }) => {
       key: "favorite",
     },
   ];
-  const favoriteItemList = useMemo(() => {
-    if (activeFilter === "favorite") {
-      const allProducts = [
-        ...vegetablesAndFruits,
-        ...dairyAndEggs,
-        ...meatAndSeaFood,
-        ...pantryFood,
-        ...bakeryFood,
-        ...frozenFood,
-      ];
-      return allProducts.filter((p) => p.isFavorite);
-    }
-  }, [activeFilter]);
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header hideBackArrow />
+      <Header hideBackArrow hidePlusIcon={true} />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
@@ -138,7 +165,31 @@ const Home = ({ navigation }) => {
           {activeFilter === "weekly" ? "Weekly Offers" : activeFilter}
         </Text>
       </View>
-      {activeFilter !== "favorite" ? (
+      {activeFilter === "weekly" && (
+        <>
+          <View style={{ paddingBottom: 100 }}>
+            <FlatList
+              key={"_"}
+              data={productList}
+              horizontal={false}
+              numColumns={2}
+              columnWrapperStyle={styles.categoryContainer}
+              renderItem={({ item }) => {
+                return (
+                  <>
+                    {item.offer && (
+                      <ProductItem product={item} categoryList={categoryList} />
+                    )}
+                  </>
+                );
+              }}
+              keyExtractor={(item) => item.id}
+            />
+          </View>
+        </>
+      )}
+
+      {activeFilter === "grocery" && (
         <FlatList
           key={"_"}
           data={categoryList}
@@ -151,15 +202,18 @@ const Home = ({ navigation }) => {
                 activeFilter={activeFilter}
                 category={item}
                 navigation={navigation}
+                categoryList={categoryList}
               />
             );
           }}
           keyExtractor={(item) => item.id}
         />
-      ) : (
+      )}
+
+      {activeFilter === "favorite" && (
         <FlatList
           key={"_"}
-          data={favoriteItemList}
+          data={favoriteItems.items}
           horizontal={false}
           numColumns={2}
           columnWrapperStyle={styles.categoryContainer}
@@ -190,6 +244,9 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     fontWeight: "bold",
     color: "#9D9998",
+  },
+  categoryContainer: {
+    justifyContent: "space-between",
   },
   filterContainer: {
     flexDirection: "row",

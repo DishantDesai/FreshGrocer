@@ -17,6 +17,7 @@
     "@react-navigation/core": "^6.1.0",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "@stripe/stripe-react-native": "^0.2.3",
     "axios": "^0.24.0",
     "expo": "~43.0.2",
     "expo-app-loading": "~1.2.1",

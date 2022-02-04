@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
 
-const CategoryItem = ({ category, activeFilter, navigation }) => {
+const CategoryItem = ({ category, activeFilter, navigation, categoryList }) => {
+  const [categoryListData, setCategoryListData] = useState([]);
+
+  useEffect(() => {
+    const filterData = categoryList.filter((item) => {
+      return item.type === category.type;
+    });
+
+    setCategoryListData(filterData[0].list);
+  }, [category]);
+
   return (
     <View>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("ProductList", { category, activeFilter })
+          navigation.navigate("ProductList", {
+            category,
+            activeFilter,
+            categoryListData,
+          })
         }
       >
         <View style={styles.categoryBox}>
