@@ -16,6 +16,7 @@ import ProductEditScreen from "../screens/Admin/ProductEditScreen";
 import Checkout from "../screens/User/CheckoutScreen";
 import Order from "../screens/User/OrderScreen";
 import ListOrders from "../screens/Admin/ListOrders";
+import ProfileScreen from "../screens/User/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -77,6 +78,11 @@ export const AppStack = () => {
         name="ProductDetail"
         options={{ headerShown: false }}
         component={ProductDetail}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        options={{ headerShown: false }}
+        component={ProfileScreen}
       />
     </Stack.Navigator>
   );
