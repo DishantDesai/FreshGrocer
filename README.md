@@ -42,7 +42,10 @@
     - Make reusable components for project such as Header,ProductItem,CategoryItem,CartItem etc.
   
 
-# Deliverable 2:
-Designed Uml Activity Diagram, Class Diagram and Sequence Diagram.
+**Navdeep kaur(2092868)**
+    - Base Plan
+            Discuss and create base plan for project based on given definition
+    - UML Diagrams
+            Designed Uml Activity Diagram, Class Diagram and Sequence Diagram.
 
-Navdeep kaur (2092868)
+
