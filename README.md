@@ -21,6 +21,7 @@
         Delete product from firestore
         Edit product and update realtime details
         List from firebase for current placed orders and previous completed oreders
+        Search product in productlist in admin user
         
 **Dishant Desai(2094440)**
 
@@ -67,7 +68,7 @@
     - UML Diagrams
             Designed Uml Use case diagram and user stories.
     - Functionality
-            Add payment method for place order screen (Integrate the sripe payment gateway in app)
+            Add payment method for place order screen (Integrate the stripe payment gateway in app)
             Add and remove product from favorite items
             User profile (Fetch logged in user detail)
             Filter the product list using category and subcategory
