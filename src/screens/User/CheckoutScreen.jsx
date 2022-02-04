@@ -78,35 +78,39 @@ const CheckoutScreen = ({ route }) => {
 
     setLoading(true);
 
-    const response = await fetch(
-      `https://grocery-rn-app.herokuapp.com/buy/${subtotal}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    try {
+      const response = await fetch(
+        `https://grocery-rn-app.herokuapp.com/buy/${subtotal}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setLoading(false);
+
+      const data = await response.json();
+
+      const initSheet = await stripe.initPaymentSheet({
+        paymentIntentClientSecret: data.clientSecret,
+        merchantDisplayName: "Grocery",
+      });
+
+      if (initSheet.error) {
+        return Alert.alert(initSheet.error.message);
       }
-    );
 
-    setLoading(false);
+      const presentSheet = await stripe.presentPaymentSheet({
+        clientSecret: data.clientSecret,
+      });
 
-    const data = await response.json();
-
-    const initSheet = await stripe.initPaymentSheet({
-      paymentIntentClientSecret: data.clientSecret,
-      merchantDisplayName: "Grocery",
-    });
-
-    if (initSheet.error) {
-      return Alert.alert(initSheet.error.message);
-    }
-
-    const presentSheet = await stripe.presentPaymentSheet({
-      clientSecret: data.clientSecret,
-    });
-
-    if (presentSheet.error) {
-      return Alert.alert(presentSheet.error.message);
+      if (presentSheet.error) {
+        return Alert.alert(presentSheet.error.message);
+      }
+    } catch (error) {
+      setLoading(false);
     }
 
     try {

@@ -15,6 +15,7 @@ import { THEME_COLOR } from "../utils/constants";
 import { signOutSuccess } from "../redux/actions/auth";
 import { useSelector } from "react-redux";
 import { auth } from "../firebase/config";
+import { clearCart } from "../redux/actions/cart";
 
 const Header = ({
   title,
@@ -33,6 +34,7 @@ const Header = ({
     signOut(auth)
       .then(() => {
         dispatch(signOutSuccess());
+        dispatch(clearCart());
       })
       .catch((error) => {
         ToastAndroid.showWithGravity(

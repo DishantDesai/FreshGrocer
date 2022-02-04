@@ -59,6 +59,8 @@ const ProductDetailScreen = ({ route }) => {
   }, [favoriteItems]);
 
   const increaseQty = (item) => {
+    console.log("item.count ", item);
+
     dispatch(increaseQuantity(item.id));
   };
 
@@ -112,7 +114,12 @@ const ProductDetailScreen = ({ route }) => {
         imageSize={24}
         readonly
       />
-      <Text style={{ fontWeight: "bold", fontSize: 20 }}>${product.price}</Text>
+      <View style={{ flexDirection: "row" }}>
+        <Text style={styles.productPrice}>${product.discountPrice}</Text>
+        {product.offer && (
+          <Text style={styles.productPrice2}>${product.price}</Text>
+        )}
+      </View>
       <View
         style={{
           flexDirection: "row",
@@ -189,6 +196,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     marginTop: 25,
+  },
+  productPrice: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+    marginRight: 3,
+  },
+  productPrice2: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "black",
+    textDecorationLine: "line-through",
   },
   productTitle: {
     fontSize: 20,

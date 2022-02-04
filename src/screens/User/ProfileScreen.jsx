@@ -8,6 +8,8 @@ import { db } from "../../firebase/config";
 const ProfileScreen = () => {
   const userData = useSelector((state) => state.auth);
 
+  console.log("userData", userData);
+
   const [userInfo, setUserInfo] = useState(null);
 
   const userDocRef = collection(db, "users");
@@ -22,8 +24,11 @@ const ProfileScreen = () => {
           id: doc.data().id,
         }));
         const filteredData = temp.filter((user) => {
+          console.log("user.id", user.id);
+          console.log("userData?.user", userData?.user);
           return user.id === userData?.user?.id;
         });
+        console.log(filteredData);
         if (filteredData && filteredData.length > 0) {
           setUserInfo(filteredData[0]);
         }

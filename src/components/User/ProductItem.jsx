@@ -80,7 +80,9 @@ const ProductItem = ({
           <View style={styles.priceQuantity}>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.productPrice}>${product.discountPrice}</Text>
-              <Text style={styles.productPrice2}>${product.price}</Text>
+              {product.offer && (
+                <Text style={styles.productPrice2}>${product.price}</Text>
+              )}
             </View>
 
             {count ? (

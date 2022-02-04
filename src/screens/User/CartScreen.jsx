@@ -39,11 +39,10 @@ const CartScreen = () => {
   const [cartSubtotal, setCartSubtotal] = useState("");
   const navigation = useNavigation();
   const { items } = useSelector((state) => state.cart.itemsSelected);
-  console.log("items", items);
   const calculateCartTotal = () => {
     let total = 0;
     items.forEach((c) => {
-      const productPrice = parseFloat(c.price) * c.quantity;
+      const productPrice = parseFloat(c.discountPrice) * c.count;
       total += parseFloat(productPrice);
     });
     return total;
@@ -93,14 +92,14 @@ const CartScreen = () => {
           <Image
             style={styles.productThumb}
             source={{
-              uri: cartProduct.url,
+              uri: cartProduct.image,
             }}
           />
           <View>
             <Text numberOfLines={1} style={styles.productTitle}>
               {cartProduct.name}
             </Text>
-            <Text style={styles.productPrice}>{cartProduct.price}</Text>
+            <Text style={styles.productPrice}>{cartProduct.discountPrice}</Text>
           </View>
         </View>
         <TouchableOpacity
