@@ -29,7 +29,16 @@
             CartScreen
             CheckoutScreen
             OrderScreen
-            
+    - Functionality
+            Routes setup
+            Authentication Routes
+            Signin with firebase email/password
+            Signin with google and facebook
+            Signup with facebook
+            Logout
+            Redux store setup and persistant data
+            Search functionality in productList page
+            profile page issue fix for google user
     - Make reusable components for project such as Header,ProductItem,CategoryItem,CartItem etc.
   
 
