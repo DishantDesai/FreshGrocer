@@ -54,9 +54,9 @@
     - UML Diagrams
             Designed Uml Activity Diagram, Class Diagram and Sequence Diagram.
     - Functionality
-            Cart Page- Where customer can add new products for placing order. Customer can add products from all categories including weekly offers. Price of each                          item is added in cart and recalculate the price every time and update the price list for the customer order.
-            Weekly Deals Page- In this area, weekly offers are made available on product list. Where customer get discount on the original price. Every week this                                   list is updated.
-            Email Confirmation: Here, email confirmation has done. When customer has placed order, he will get confirmation email from “Fresh Grocer” about placing                                 order successfully. 
+            Cart Page- Where customer can add new products for placing order. Customer can add products from all categories including weekly offers. Price of each   item is added in cart and recalculate the price every time and update the price list for the customer order.
+            Weekly Deals Page- In this area, weekly offers are made available on product list. Where customer get discount on the original price. Every week this   list is updated.
+            Email Confirmation: Here, email confirmation has done. When customer has placed order, he will get confirmation email from “Fresh Grocer” about placing order successfully. 
             Timer Screen: After placing successful order, there will be timer screen shown about the time when your order will be delivered. 
             Splash Screen- I have designed splash screen, which you can see when app is started.
 
