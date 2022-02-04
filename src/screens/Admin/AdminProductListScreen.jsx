@@ -16,7 +16,10 @@ import Header from "../../components/Header";
 import CategoryItem from "../../components/User/CategoryItem";
 import ProductItem from "../../components/User/ProductItem";
 import { THEME_COLOR } from "../../utils/constants";
-
+import { getAllProducts } from "../../redux/actions/products";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { useSelector, useDispatch } from "react-redux";
 import {
   vegetablesAndFruits,
   dairyAndEggs,
@@ -26,9 +29,16 @@ import {
   frozenFood,
 } from "../../utils/data";
 import AdminProductItem from "./AdminProductItem";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase/config";
 const AdminProductList = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const productsCollection = collection(db, "products");
+
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filterData, setfilterData] = useState([]);
+
+  const { items } = useSelector((state) => state.products);
+
   // const { category } = route.params;
   const [sortOption, setSortOption] = useState(null);
   const data = [
@@ -38,78 +48,19 @@ const AdminProductList = ({ navigation, route }) => {
   ];
   const [activeFilter, setActiveFilter] = useState("weekly");
   const [productList, setProductList] = useState([]);
-  const productsCollection = collection(db, "products");
-
-  const [products, setProducts] = useState([]);
 
   const getProducts = async () => {
     const data = await getDocs(productsCollection);
 
-    setProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    dispatch(
+      getAllProducts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
   };
 
   useEffect(() => {
     getProducts();
   }, []);
 
-  const categoryList = [
-    {
-      id: 1,
-      title: "Fruits & Vegetables",
-      thumb: require("../../../assets/images/fruits-and-vegetables.jpeg"),
-      type: "fruitsAndVegetables",
-    },
-    {
-      id: 2,
-      title: "Dairy & Eggs",
-      thumb: require("../../../assets/images/Dairy-and-eggs.jpeg"),
-      type: "dairy",
-    },
-    {
-      id: 3,
-      title: "Meet & Sea Food",
-      thumb: require("../../../assets/images/meat-and-sea-food.jpeg"),
-      type: "meat",
-    },
-    {
-      id: 4,
-      title: "Pantry & Groceries",
-      thumb: require("../../../assets/images/pantry.jpeg"),
-      type: "pantry",
-    },
-    {
-      id: 5,
-      title: "Bakery",
-      thumb: require("../../../assets/images/bakery.jpeg"),
-      type: "bakery",
-    },
-    {
-      id: 6,
-      title: "Frozen Food",
-      thumb: require("../../../assets/images/frozen-food.jpeg"),
-      type: "frozen",
-    },
-  ];
-  const filterList = [
-    {
-      id: 1,
-      title: "Weekly Offers",
-      thumb: require("../../../assets/images/weekly-offers.jpeg"),
-      key: "weekly",
-    },
-    {
-      id: 2,
-      title: "Grocery",
-      thumb: require("../../../assets/images/grocery.png"),
-      key: "grocery",
-    },
-    {
-      id: 3,
-      title: "Favorite",
-      thumb: require("../../../assets/images/favorites.png"),
-      key: "favorite",
-    },
-  ];
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
@@ -131,48 +82,41 @@ const AdminProductList = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <Header
         hideCart={true}
-        hidePlusIcon={false}
+        addNavigate={true}
         hideBackArrow={true}
-        addNavigate={false}
+        hidePlusIcon={false}
       />
       <TextInput
         style={styles.input}
         placeholder="Search items..."
         autoCapitalize="none"
+        value={search}
+        onChangeText={(text) => setSearch(text)}
       />
 
-      <View style={styles.sortingContainer}>
-        <Dropdown
-          style={styles.dropdown}
-          containerStyle={styles.containerListStyle}
-          placeholderStyle={styles.activeColor}
-          selectedTextStyle={styles.activeColor}
-          data={data}
-          onChange={(item) => setSortOption(item.value)}
-          value={sortOption}
-          maxHeight={180}
-          labelField="label"
-          valueField="value"
-          placeholder="Sorting"
-          activeColor={THEME_COLOR}
-          iconColor={THEME_COLOR}
-          renderLeftIcon={() => (
-            <MaterialCommunityIcons style={styles.icon} name="sort" size={24} />
-          )}
-          renderItem={renderItem}
-        />
-        {sortOption ? (
-          <TouchableOpacity onPress={() => setSortOption(null)}>
-            <AntDesign name="closecircleo" size={18} color={THEME_COLOR} />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate("ListOrders")}>
+            <Text style={{ fontSize: 20 }}>Orders</Text>
           </TouchableOpacity>
-        ) : (
-          <Text></Text>
-        )}
+        </View>
       </View>
 
       <FlatList
         key={"_"}
-        data={products}
+        data={items.filter((val) => {
+          if (search === "") {
+            return val;
+          } else if (val.name.toLowerCase().includes(search.toLowerCase())) {
+            return val;
+          }
+        })}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={styles.categoryContainer}

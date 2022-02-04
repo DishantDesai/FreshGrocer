@@ -6,16 +6,14 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/FreshGrocer.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -27,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "ANDROID_KEY": "793788753146-s1jksokeve9dvgmcp8gp0duc9aqncvqv.apps.googleusercontent.com",
+      "facebook": {
+        "appId": "332561522084753"
+      }
+      }
   }
 }

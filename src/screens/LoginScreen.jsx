@@ -13,7 +13,7 @@ import AppLoading from "expo-app-loading";
 import { useFonts } from "expo-font";
 import { Formik, Field } from "formik";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 import { signInValidationSchema } from "../ValidationSchemas/Signin";
 import CustomInput from "../components/Common/CustomInput";
@@ -31,15 +31,35 @@ const Home = ({ navigation }) => {
   const onLoginPress = ({ email, password }) => {
     dispatch(showAuthLoader());
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
-        dispatch(signInSuccess(user));
+        if (email.toLowerCase() === "admin@freshgrocer.com") {
+          const docRef = doc(db, "users", "1tYQUhtMB9FDdake2t7D");
+          const docSnap = await getDoc(docRef);
+          //Redirect based on fetched user if it is Admin or normal user
+          if (docSnap.exists()) {
+            const userSnap = docSnap.data();
+            dispatch(
+              signInSuccess({
+                accessToken: user.stsTokenManager.accessToken,
+                ...user,
+                ...userSnap,
+              })
+            );
+          }
+        } else {
+          dispatch(
+            signInSuccess({
+              accessToken: user.stsTokenManager.accessToken,
+              ...user,
+            })
+          );
+        }
         ToastAndroid.showWithGravity(
           "Login Successfully",
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
-        navigation.navigate("Home");
       })
       .catch((error) => {
         dispatch(hideAuthLoader());
@@ -50,19 +70,6 @@ const Home = ({ navigation }) => {
         );
       });
   };
-  // const getProducts = async () => {
-  //   const q = collection(
-  //     db,
-  //     "product_main",
-  //     "categories",
-  //     "fruits_and_vegetables"
-  //   );
-  //   onSnapshot(q, (querySnapshot) => {
-  //     querySnapshot.docs.map((doc) => {
-  //       console.log(doc.data());
-  //     });
-  //   });
-  // };
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
@@ -106,7 +113,6 @@ const Home = ({ navigation }) => {
               </View>
             )}
           </Formik>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >

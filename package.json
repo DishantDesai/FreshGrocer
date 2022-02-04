@@ -17,10 +17,13 @@
     "@react-navigation/core": "^6.1.0",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "@stripe/stripe-react-native": "^0.2.3",
     "axios": "^0.24.0",
     "expo": "~43.0.2",
     "expo-app-loading": "~1.2.1",
+    "expo-constants": "^13.0.1",
     "expo-font": "~10.0.3",
+    "expo-google-app-auth": "~9.0.0",
     "expo-status-bar": "~1.1.0",
     "firebase": "^9.6.2",
     "formik": "^2.2.9",
@@ -41,7 +44,8 @@
     "react-timer-hook": "^3.0.5",
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-facebook": "~12.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

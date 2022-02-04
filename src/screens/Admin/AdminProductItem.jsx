@@ -21,8 +21,6 @@ const AdminProductItem = ({
     setCount(count - 1);
   };
 
-  console.log("product", product);
-
   const deleteProduct = async (id) => {
     try {
       const productDoc = doc(db, "products", id);
@@ -30,7 +28,6 @@ const AdminProductItem = ({
 
       getProducts();
     } catch (error) {
-      console.log("id", id);
       console.log("eror", error);
     }
   };

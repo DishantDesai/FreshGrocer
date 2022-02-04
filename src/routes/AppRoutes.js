@@ -11,13 +11,46 @@ import ProductList from "../screens/User/ProductListScreen";
 import Cart from "../screens/User/CartScreen";
 import ProductDetail from "../screens/User/ProductDetailScreen";
 import AdminProductList from "../screens/Admin/AdminProductListScreen";
+import AddProducts from "../screens/Admin/AddProducts";
 import ProductEditScreen from "../screens/Admin/ProductEditScreen";
 import Checkout from "../screens/User/CheckoutScreen";
 import Order from "../screens/User/OrderScreen";
-import AddProducts from "../screens/Admin/AddProducts"
+import ListOrders from "../screens/Admin/ListOrders";
+import ProfileScreen from "../screens/User/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
+export const AdminStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="AdminProductList">
+      <Stack.Screen
+        name="AdminProductList"
+        options={{ headerShown: false }}
+        component={AdminProductList}
+      />
+      <Stack.Screen
+        name="AddProducts"
+        options={{ headerShown: false }}
+        component={AddProducts}
+      />
+      <Stack.Screen
+        name="ProductEdit"
+        options={{ headerShown: false }}
+        component={ProductEditScreen}
+      />
+      <Stack.Screen
+        name="ListOrders"
+        options={{ headerShown: false }}
+        component={ListOrders}
+      />
+      <Stack.Screen
+        name="ProfileScreen"
+        options={{ headerShown: false }}
+        component={ProfileScreen}
+      />
+    </Stack.Navigator>
+  );
+};
 export const AppStack = () => {
   return (
     <Stack.Navigator>
@@ -52,14 +85,9 @@ export const AppStack = () => {
         component={ProductDetail}
       />
       <Stack.Screen
-        name="AdminProductList"
+        name="ProfileScreen"
         options={{ headerShown: false }}
-        component={AdminProductList}
-      />
-      <Stack.Screen
-        name="ProductEdit"
-        options={{ headerShown: false }}
-        component={ProductEditScreen}
+        component={ProfileScreen}
       />
     </Stack.Navigator>
   );
@@ -82,21 +110,6 @@ export const AuthStack = () => {
         name="Login"
         options={{ headerShown: false }}
         component={Login}
-      />
-      <Stack.Screen
-        name="AdminProductList"
-        options={{ headerShown: false }}
-        component={AdminProductList}
-      />
-      <Stack.Screen
-        name="AddProducts"
-        options={{ headerShown: false }}
-        component={AddProducts}
-      />
-      <Stack.Screen
-        name="ProductEdit"
-        options={{ headerShown: false }}
-        component={ProductEditScreen}
       />
     </Stack.Navigator>
   );
