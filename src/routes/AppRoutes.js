@@ -43,6 +43,11 @@ export const AdminStack = () => {
         options={{ headerShown: false }}
         component={ListOrders}
       />
+      <Stack.Screen
+        name="ProfileScreen"
+        options={{ headerShown: false }}
+        component={ProfileScreen}
+      />
     </Stack.Navigator>
   );
 };

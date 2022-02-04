@@ -9,14 +9,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import {
-  vegetablesAndFruits,
-  dairyAndEggs,
-  meatAndSeaFood,
-  pantryFood,
-  bakeryFood,
-  frozenFood,
-} from "../../utils/data";
 import ProductItem from "../../components/User/ProductItem";
 import Header from "../../components/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,13 +29,13 @@ const ProductListScreen = ({ route }) => {
   const [filterFoodProduct, setFilterFoodProduct] = useState("all");
 
   const [sorting, setSorting] = useState("relevance");
-  console.log("sorting", sorting);
 
   const productsCollection = collection(db, "products");
 
   const { category, categoryListData } = route.params;
   const [productList, setProductList] = useState([]);
   const [sortOption, setSortOption] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { items } = useSelector((state) => state.products);
@@ -133,32 +125,6 @@ const ProductListScreen = ({ route }) => {
     //   setLoading(false);
     // }, 1000);
   }, []);
-  // const tempProductList = [...productList];
-  // const sortedProducts = useMemo(() => {
-  //   if (sortOption) {
-  //     return tempProductList.sort((firstEle, secondEle) => {
-  //       if (sortOption === "priceAsc") {
-  //         if (firstEle.price < secondEle.price) {
-  //           return 1;
-  //         }
-  //         if (firstEle.price > secondEle.price) {
-  //           return -1;
-  //         }
-  //         return 0;
-  //       } else if (sortOption === "priceDesc") {
-  //         if (firstEle.price < secondEle.price) {
-  //           return -1;
-  //         }
-  //         if (firstEle.price > secondEle.price) {
-  //           return 1;
-  //         }
-  //         return 0;
-  //       }
-  //     });
-  //   } else {
-  //     return productList;
-  //   }
-  // }, [sortOption, productList]);
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
@@ -182,6 +148,7 @@ const ProductListScreen = ({ route }) => {
         style={styles.input}
         placeholder="Search items..."
         autoCapitalize="none"
+        onChangeText={setSearchText}
       />
       <View style={styles.categoryFilterContainer}>
         {categoryListData.map((list, index) => {
@@ -215,6 +182,15 @@ const ProductListScreen = ({ route }) => {
           <FlatList
             key={"_"}
             data={productList}
+            data={productList.filter((val) => {
+              if (searchText === "") {
+                return val;
+              } else if (
+                val.name.toLowerCase().includes(searchText.toLowerCase())
+              ) {
+                return val;
+              }
+            })}
             horizontal={false}
             numColumns={2}
             columnWrapperStyle={styles.categoryContainer}

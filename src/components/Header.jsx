@@ -23,6 +23,8 @@ const Header = ({
   hideBackArrow,
   addNavigate,
   hidePlusIcon = true,
+  hideProfile,
+  showPowerOff,
   isAdmin = false,
 }) => {
   const { items } = useSelector((state) => state.cart.itemsSelected);
@@ -46,7 +48,13 @@ const Header = ({
   };
 
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       {!hideBackArrow && (
         <TouchableOpacity
           onPress={() => {
@@ -68,11 +76,13 @@ const Header = ({
         </TouchableOpacity>
       )}
       <Text style={styles.logo}>{title ? title : "Fresh Grocer"}</Text>
-      <View>
+      <View style={{ flexDirection: "row" }}>
         {!hideCart && (
-          <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+          <TouchableOpacity
+            style={{ marginRight: 20 }}
+            onPress={() => navigation.navigate("Cart")}
+          >
             <Feather name="shopping-cart" size={28} color="black" />
-
             <View style={styles.cartCount}>
               <Text style={{ fontSize: 10, color: "white" }}>
                 {items.length > 0 ? items.length : 0}
@@ -80,18 +90,23 @@ const Header = ({
             </View>
           </TouchableOpacity>
         )}
+        {!hideProfile && (
+          <View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ProfileScreen")}
+            >
+              <AntDesign name="user" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-
-      <View>
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileScreen")}>
-          <AntDesign name="user" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity onPress={logout}>
-          <AntDesign name="poweroff" size={28} color="black" />
-        </TouchableOpacity>
-      </View>
+      {showPowerOff && (
+        <View>
+          <TouchableOpacity onPress={logout}>
+            <AntDesign name="poweroff" size={28} color="black" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -99,10 +114,12 @@ const Header = ({
 Header.propTypes = {
   hideCart: PropTypes.bool,
   hideBackArrow: PropTypes.bool,
+  hideProfile: PropTypes.bool,
 };
 Header.defaultProps = {
   hideCart: false,
   hideBackArrow: false,
+  hideProfile: false,
 };
 const styles = StyleSheet.create({
   logo: {

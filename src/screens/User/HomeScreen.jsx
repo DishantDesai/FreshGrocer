@@ -49,10 +49,10 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     if (items.length > 0) {
-      // const filterData = items.filter((item) => {
-      //   return item.category === category.type;
-      // });
-      setProductList(items);
+      const filterData = items.filter((item) => {
+        return item.offer;
+      });
+      setProductList(filterData);
     }
   }, [items]);
 
@@ -124,11 +124,6 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header hideBackArrow hidePlusIcon={true} />
-      <TextInput
-        style={styles.input}
-        placeholder="Search items..."
-        autoCapitalize="none"
-      />
       <View style={styles.filterContainer}>
         {filterList.map((filter) => {
           return (

@@ -113,7 +113,6 @@ const Home = ({ navigation }) => {
               </View>
             )}
           </Formik>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
           <Text
             style={{ color: "#a3a4a5", alignSelf: "center", marginTop: "10%" }}
           >

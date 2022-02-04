@@ -1,14 +1,14 @@
 import { collection, doc, getDocs, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import { Avatar, Caption, Title, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from "../../firebase/config";
+import Header from "../../components/Header";
 
 const ProfileScreen = () => {
   const userData = useSelector((state) => state.auth);
-
-  console.log("userData", userData);
 
   const [userInfo, setUserInfo] = useState(null);
 
@@ -23,15 +23,12 @@ const ProfileScreen = () => {
           ...doc.data(),
           id: doc.data().id,
         }));
-        const filteredData = temp.filter((user) => {
-          console.log("user.id", user.id);
-          console.log("userData?.user", userData?.user);
-          return user.id === userData?.user?.id;
+        const filteredData = temp.find((user) => {
+          return (
+            user.id === userData?.user?.id || user.id === userData?.user?.uid
+          );
         });
-        console.log(filteredData);
-        if (filteredData && filteredData.length > 0) {
-          setUserInfo(filteredData[0]);
-        }
+        setUserInfo(filteredData);
       } catch (error) {
         console.log(error);
       }
@@ -41,14 +38,30 @@ const ProfileScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ paddingHorizontal: 30, marginBottom: 25, marginTop: 40 }}>
-        <View style={{ flexDirection: "column" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: 14,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+        backgroundColor: "white",
+      }}
+    >
+      <Header
+        hideCart
+        hideProfile
+        showPowerOff
+        title="Profile"
+        hidePlusIcon={true}
+      />
+      <View style={{ paddingHorizontal: 30, marginBottom: 25 }}>
+        <View style={{ flexDirection: "column", marginTop: 30 }}>
           <Avatar.Image
             source={{
-              uri: "https://api.adorable.io/avatars/80/abott@adorable.png",
+              uri: "https://i.ibb.co/k6Xcjwv/alexander-hipp-i-EEBWg-Y-6l-A-unsplash.jpg",
             }}
             size={80}
+            style={{ alignSelf: "center" }}
           />
           <View style={{ marginLeft: 20 }}>
             <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>

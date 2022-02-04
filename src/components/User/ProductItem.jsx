@@ -22,7 +22,6 @@ const ProductItem = ({
   const navigation = useNavigation();
 
   const { itemsSelected } = useSelector((state) => state.cart);
-
   useEffect(() => {
     const filterData = itemsSelected.items.filter(
       (item) => item.id === product.id

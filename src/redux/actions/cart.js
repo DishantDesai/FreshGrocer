@@ -26,7 +26,6 @@ export const increaseQuantity = (id) => {
 };
 
 export const decreaseQuantity = (id) => {
-  console.log("id", id);
   return {
     type: "DECREASE_QUANTITY",
     payload: id,
