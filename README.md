@@ -20,7 +20,7 @@
         UI Design and integrate firebase for add product from Admin
         Delete product from firestore
         Edit product and update realtime details
-        List from firebase for current placed orders and previous completed oreders
+        List from firebase for current placed orders and previous completed orders
         Search product in productlist in admin user
         
 **Dishant Desai(2094440)**
